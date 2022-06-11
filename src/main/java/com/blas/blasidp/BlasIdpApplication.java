@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
+@ComponentScan("com.blas.blasidp.dao")
 public class BlasIdpApplication {
 
     public static void main(String[] args) {
