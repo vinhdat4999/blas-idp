@@ -7,6 +7,7 @@
         <groupId>com.blas</groupId>
         <artifactId>blas-pom</artifactId>
         <version>1.0.1</version>
+        <relativePath></relativePath>
     </parent>
     <groupId>com.blas</groupId>
     <artifactId>blas-idp</artifactId>
