@@ -36,15 +36,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoder());
-//        auth.userDetailsService(jwtUserDetailsService);
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
         http.csrf().disable();
-
         http.authorizeRequests()
-                .antMatchers("/**").permitAll();
+                .antMatchers("/auth").permitAll();
     }
 }

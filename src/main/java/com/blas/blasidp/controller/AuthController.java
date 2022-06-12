@@ -1,11 +1,10 @@
 package com.blas.blasidp.controller;
 
-import com.blas.blascommon.core.model.AuthUser;
+import com.blas.blascommon.core.service.AuthUserService;
+import com.blas.blascommon.jwt.JwtTokenUtil;
 import com.blas.blascommon.jwt.payload.JwtRequest;
 import com.blas.blascommon.jwt.payload.JwtResponse;
-import com.blas.blasidp.jwt.JwtTokenUtil;
 import com.blas.blasidp.jwt.JwtUserDetailsService;
-import com.blas.blasidp.service.AuthUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,9 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class AuthController {
-
-    @Autowired
-    private AuthUserService authUserService;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -38,7 +34,6 @@ public class AuthController {
         authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
         final UserDetails userDetails = userDetailsService.loadUserByUsername(
                 authenticationRequest.getUsername());
-        AuthUser authUser = authUserService.getAuthUserByUsername("admin");
         return ResponseEntity.ok(new JwtResponse(jwtTokenUtil.generateToken(userDetails)));
     }
 

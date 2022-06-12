@@ -1,7 +1,7 @@
 package com.blas.blasidp.jwt;
 
 import com.blas.blascommon.core.model.AuthUser;
-import com.blas.blasidp.service.impl.AuthUserServiceImpl;
+import com.blas.blascommon.core.service.AuthUserService;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +16,11 @@ import org.springframework.stereotype.Service;
 public class JwtUserDetailsService implements UserDetailsService {
 
     @Autowired
-    private AuthUserServiceImpl authUserServiceImpl;
+    private AuthUserService authUserService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        AuthUser authUser = authUserServiceImpl.getAuthUserByUsername(username);
+        AuthUser authUser = authUserService.getAuthUserByUsername(username);
         if (authUser == null) {
             throw new UsernameNotFoundException("User not found with username: " + username);
         }
