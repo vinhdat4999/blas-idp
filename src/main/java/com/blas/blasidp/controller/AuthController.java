@@ -1,5 +1,12 @@
 package com.blas.blasidp.controller;
 
+import static com.blas.blasidp.constant.Authentication.ACCOUNT_INACTIVE;
+import static com.blas.blasidp.constant.Authentication.THRESHOLD_BLOCK_ACCOUNT;
+import static com.blas.blasidp.constant.Authentication.WRONG_CREDENTIAL;
+
+import com.blas.blascommon.core.dao.AuthUserDao;
+import com.blas.blascommon.core.model.AuthUser;
+import com.blas.blascommon.exceptions.types.UnauthorizedException;
 import com.blas.blascommon.jwt.JwtTokenUtil;
 import com.blas.blascommon.jwt.payload.JwtRequest;
 import com.blas.blascommon.jwt.payload.JwtResponse;
@@ -17,6 +24,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class AuthController {
+
+    @Autowired
+    private AuthUserDao authUserDao;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -40,10 +50,23 @@ public class AuthController {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(username, password));
+            AuthUser authUser = authUserDao.getAuthUserByUsername(username);
+            if (authUser.getCountLoginFailed() > 0) {
+                authUser.setCountLoginFailed(0);
+                authUserDao.save(authUser);
+            }
         } catch (DisabledException exception) {
-            throw new Exception("USER_DISABLED", exception);
+            throw new UnauthorizedException(ACCOUNT_INACTIVE);
         } catch (BadCredentialsException exception) {
-            throw new Exception("INVALID_CREDENTIALS", exception);
+            AuthUser authUser = authUserDao.getAuthUserByUsername(username);
+            if (authUser != null && authUser.getCountLoginFailed() < THRESHOLD_BLOCK_ACCOUNT) {
+                authUser.setCountLoginFailed(authUser.getCountLoginFailed() + 1);
+                if (authUser.getCountLoginFailed() == THRESHOLD_BLOCK_ACCOUNT) {
+                    authUser.setIsActive(false);
+                }
+                authUserDao.save(authUser);
+            }
+            throw new UnauthorizedException(WRONG_CREDENTIAL);
         }
     }
 }
