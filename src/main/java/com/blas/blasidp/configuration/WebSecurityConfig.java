@@ -1,4 +1,4 @@
-package com.blas.blasidp.jwt;
+package com.blas.blasidp.configuration;
 
 import com.blas.blascommon.security.hash.Sha256Encoder;
 import org.springframework.beans.factory.annotation.Autowired;
