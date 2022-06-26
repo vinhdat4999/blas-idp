@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.blas</groupId>
         <artifactId>blas-pom</artifactId>
-        <version>1.0.3</version>
+        <version>1.0.4</version>
         <relativePath></relativePath>
     </parent>
     <groupId>com.blas</groupId>
@@ -23,7 +23,7 @@
         <dependency>
             <groupId>com.blas</groupId>
             <artifactId>blas-common</artifactId>
-            <version>1.11.0</version>
+            <version>1.12.1</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -48,8 +48,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
