@@ -11,7 +11,7 @@
     </parent>
     <groupId>com.blas</groupId>
     <artifactId>blas-idp</artifactId>
-    <version>1.2.0</version>
+    <version>1.2.1</version>
     <name>blas-idp</name>
     <description>blas-idp</description>
     <properties>
@@ -23,7 +23,7 @@
         <dependency>
             <groupId>com.blas</groupId>
             <artifactId>blas-common</artifactId>
-            <version>1.13.0</version>
+            <version>1.13.1</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
