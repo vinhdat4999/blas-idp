@@ -13,6 +13,7 @@ local.properties
 target/
 
 .idea/
+avatar
 
 # External tool builders
 .externalToolBuilders/
