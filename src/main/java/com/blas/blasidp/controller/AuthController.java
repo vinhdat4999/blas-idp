@@ -1,11 +1,13 @@
 package com.blas.blasidp.controller;
 
+import static com.blas.blasidp.constant.Authentication.ACCOUNT_BLOCKED;
 import static com.blas.blasidp.constant.Authentication.ACCOUNT_INACTIVE;
 import static com.blas.blasidp.constant.Authentication.THRESHOLD_BLOCK_ACCOUNT;
 import static com.blas.blasidp.constant.Authentication.WRONG_CREDENTIAL;
 
 import com.blas.blascommon.core.dao.AuthUserDao;
 import com.blas.blascommon.core.model.AuthUser;
+import com.blas.blascommon.exceptions.types.ForbiddenException;
 import com.blas.blascommon.exceptions.types.UnauthorizedException;
 import com.blas.blascommon.jwt.JwtTokenUtil;
 import com.blas.blascommon.jwt.JwtUserDetailsService;
@@ -16,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -57,12 +60,14 @@ public class AuthController {
             }
         } catch (DisabledException exception) {
             throw new UnauthorizedException(ACCOUNT_INACTIVE);
+        } catch (LockedException exception) {
+            throw new ForbiddenException(ACCOUNT_BLOCKED);
         } catch (BadCredentialsException exception) {
             AuthUser authUser = authUserDao.getAuthUserByUsername(username);
             if (authUser != null && authUser.getCountLoginFailed() < THRESHOLD_BLOCK_ACCOUNT) {
                 authUser.setCountLoginFailed(authUser.getCountLoginFailed() + 1);
                 if (authUser.getCountLoginFailed() == THRESHOLD_BLOCK_ACCOUNT) {
-                    authUser.setIsActive(false);
+                    authUser.setBlock(true);
                 }
                 authUserDao.save(authUser);
             }
