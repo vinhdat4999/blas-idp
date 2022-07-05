@@ -1,16 +1,22 @@
 package com.blas.blasidp.controller;
 
+import static com.blas.blascommon.utils.TimeUtils.getTimeNow;
 import static com.blas.blasidp.constant.Authentication.REGISTER_SUCCESSFULLY;
+import static com.blas.blasidp.constant.Authentication.SENT;
+import static com.blas.blasidp.constant.Authentication.VERIFY_FAILED;
+import static com.blas.blasidp.constant.Authentication.VERIFY_SUCCESSFULLY;
 
 import com.blas.blascommon.core.model.AuthUser;
 import com.blas.blascommon.core.model.Role;
 import com.blas.blascommon.core.model.UserDetail;
 import com.blas.blascommon.core.service.AuthUserService;
 import com.blas.blascommon.core.service.AuthenKeyService;
+import com.blas.blascommon.exceptions.types.BadRequestException;
 import com.blas.blascommon.security.SecurityUtils;
 import com.blas.blascommon.security.hash.Sha256Encoder;
 import com.blas.blascommon.utils.fileutils.FileUtils;
 import com.blas.blasidp.payload.RegisterBody;
+import com.blas.blasidp.payload.VerifyAccountBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,7 +35,7 @@ public class RegisterController {
     @Autowired
     private Sha256Encoder passwordEncoder;
 
-    @PostMapping(value = "/register")
+    @PostMapping(value = "/auth/register")
     public ResponseEntity<?> registerAccount(@RequestBody RegisterBody registerBody) {
         Role roleUser = new Role();
         roleUser.setRoleId("1");
@@ -60,5 +66,26 @@ public class RegisterController {
         authenKeyService.createAuthenKey(authUser);
 
         return ResponseEntity.ok(REGISTER_SUCCESSFULLY);
+    }
+
+    @PostMapping(value = "/auth/resend-key")
+    public ResponseEntity<?> resendAuthenKey(@RequestBody String userId) {
+        AuthUser authUser = authUserService.getAuthUserByUserId(userId);
+        authenKeyService.createAuthenKey(authUser);
+        return ResponseEntity.ok(SENT);
+    }
+
+    @PostMapping(value = "/auth/verify-new-account")
+    public ResponseEntity<?> verifyNewAccount(@RequestBody VerifyAccountBody verifyAccountBody) {
+        if (authenKeyService.isValidAuthenKey(verifyAccountBody.getUserId(),
+                verifyAccountBody.getAuthenKey(), getTimeNow())) {
+            AuthUser authUser = authUserService.getAuthUserByUserId(verifyAccountBody.getUserId());
+            authenKeyService.useAuthenKey(authUser);
+            authUser.setActive(true);
+            authUserService.updateAuthUser(authUser);
+        } else {
+            throw new BadRequestException(VERIFY_FAILED);
+        }
+        return ResponseEntity.ok(VERIFY_SUCCESSFULLY);
     }
 }
