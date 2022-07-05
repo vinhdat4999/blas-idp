@@ -2,10 +2,10 @@ server:
   port: 8080
 spring:
   datasource:
-    driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/blas
-    username: root
-    password:
+    driver-class-name: org.postgresql.Driver
+    username: fjuyjuvh
+    url: jdbc:postgresql://tiny.db.elephantsql.com:5432/fjuyjuvh
+    password: Jb0wvvaz3NUxFFpEf2QIT_n1Uirwl7lK
   jpa:
     hibernate:
       ddl-auto: none
