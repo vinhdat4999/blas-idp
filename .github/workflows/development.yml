@@ -17,7 +17,7 @@ jobs:
           sudo apt-get update
       - name: Checkout source code
         uses: actions/checkout@v2
-  build and test:
+  build_and_test:
     needs: prepare
     runs-on: ubuntu-latest
     steps:
