@@ -26,13 +26,14 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: 11
-      - name: Build with Maven
-        run: mvn package
+#      - name: Build with Maven
+#        run: mvn package
       - name: Test with Maven
+#        run: mvn test && mvn package
         run: mvn test && mvn package
-      - name: Build Jar file
-        run: mkdir staging && cp target/*.jar staging
-      - uses: actions/upload-artifact@v1
-        with:
-          name: Package
-          path: staging
+#      - name: Build Jar file
+#        run: mkdir staging && cp target/*.jar staging
+#      - uses: actions/upload-artifact@v1
+#        with:
+#          name: Package
+#          path: staging
