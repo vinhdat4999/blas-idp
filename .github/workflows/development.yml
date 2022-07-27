@@ -1,4 +1,4 @@
-name: Build and Deploy Workflow
+name: Build and Test workflow
 
 on:
   push:
@@ -10,30 +10,23 @@ jobs:
   prepare:
     runs-on: ubuntu-latest
     steps:
-      - name: Update
+      - name: Update library
         shell: bash
         continue-on-error: true
-        run:
+        run: |
           sudo apt-get update
-      - name: Checkout source code
-        uses: actions/checkout@v2
+          sudo apt-get upgrade -y
   build_and_test:
     needs: prepare
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout source code
+        uses: actions/checkout@v2
       - name: Set up JDK 11
         uses: actions/setup-java@v3
         with:
           distribution: 'adopt'
           java-version: 11
-#      - name: Build with Maven
-#        run: mvn package
       - name: Test with Maven
-#        run: mvn test && mvn package
-        run: mvn test && mvn package
-#      - name: Build Jar file
-#        run: mkdir staging && cp target/*.jar staging
-#      - uses: actions/upload-artifact@v1
-#        with:
-#          name: Package
-#          path: staging
+        run: |
+          mvn clean install
