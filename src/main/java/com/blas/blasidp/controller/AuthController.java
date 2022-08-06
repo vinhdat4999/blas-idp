@@ -11,8 +11,8 @@ import com.blas.blascommon.exceptions.types.ForbiddenException;
 import com.blas.blascommon.exceptions.types.UnauthorizedException;
 import com.blas.blascommon.jwt.JwtTokenUtil;
 import com.blas.blascommon.jwt.JwtUserDetailsService;
-import com.blas.blascommon.jwt.payload.JwtRequest;
-import com.blas.blascommon.jwt.payload.JwtResponse;
+import com.blas.blasidp.payload.JwtRequest;
+import com.blas.blasidp.payload.JwtResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -42,14 +42,14 @@ public class AuthController {
 
     @PostMapping(value = "/auth/login")
     public ResponseEntity<?> createAuthenticationToken(
-            @RequestBody JwtRequest authenticationRequest) throws Exception {
+            @RequestBody JwtRequest authenticationRequest) {
         authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
         final UserDetails userDetails = userDetailsService.loadUserByUsername(
                 authenticationRequest.getUsername());
         return ResponseEntity.ok(new JwtResponse(jwtTokenUtil.generateToken(userDetails)));
     }
 
-    private void authenticate(String username, String password) throws Exception {
+    private void authenticate(String username, String password) {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(username, password));

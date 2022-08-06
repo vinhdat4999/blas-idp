@@ -15,5 +15,4 @@ public class BlasIdpApplication {
     public static void main(String[] args) {
         SpringApplication.run(BlasIdpApplication.class, args);
     }
-
 }

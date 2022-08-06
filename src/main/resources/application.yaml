@@ -10,6 +10,8 @@ spring:
     hibernate:
       ddl-auto: none
     show-sql: 'true'
+jwt:
+  timeToExpired: 86400 #24h
 
 #logging:
 #  file:
