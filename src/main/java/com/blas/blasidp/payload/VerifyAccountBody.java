@@ -7,5 +7,4 @@ public class VerifyAccountBody {
 
     private String userId;
     private String authenKey;
-
 }
