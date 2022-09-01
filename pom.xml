@@ -11,7 +11,7 @@
     </parent>
     <groupId>com.blas</groupId>
     <artifactId>blas-idp</artifactId>
-    <version>1.4.0</version>
+    <version>1.5.0</version>
     <name>blas-idp</name>
     <description>blas-idp</description>
     <properties>
