@@ -4,6 +4,7 @@
 
 | Version | Date release | Tickets/Notes                       |
 |---------|--------------|-------------------------------------|
+| 1.5.0   | 01/09/2022   | Enhance response body               |
 | 1.4.0   | 01/09/2022   | Enhance register feature            |
 | 1.3.1   | 06/08/2022   | Refactor code                       |
 | 1.2.2   | 08/07/2022   | Add block user and register feature |

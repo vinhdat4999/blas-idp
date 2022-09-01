@@ -11,8 +11,10 @@ import com.blas.blascommon.exceptions.types.ForbiddenException;
 import com.blas.blascommon.exceptions.types.UnauthorizedException;
 import com.blas.blascommon.jwt.JwtTokenUtil;
 import com.blas.blascommon.jwt.JwtUserDetailsService;
+import com.blas.blascommon.properties.JwtConfigurationProperties;
 import com.blas.blasidp.payload.JwtRequest;
 import com.blas.blasidp.payload.JwtResponse;
+import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -40,13 +42,19 @@ public class AuthController {
   @Autowired
   private JwtUserDetailsService userDetailsService;
 
+  @Autowired
+  private JwtConfigurationProperties jwtConfigurationProperties;
+
   @PostMapping(value = "/auth/login")
   public ResponseEntity<?> createAuthenticationToken(
       @RequestBody JwtRequest authenticationRequest) {
     authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
     final UserDetails userDetails = userDetailsService.loadUserByUsername(
         authenticationRequest.getUsername());
-    return ResponseEntity.ok(new JwtResponse(jwtTokenUtil.generateToken(userDetails)));
+    return ResponseEntity.ok(new JwtResponse(jwtTokenUtil.generateToken(userDetails),
+        jwtConfigurationProperties.getTimeToExpired(),
+        LocalDateTime.now().minusSeconds(-jwtConfigurationProperties.getTimeToExpired()), null,
+        null, "Bearer"));
   }
 
   private void authenticate(String username, String password) {
