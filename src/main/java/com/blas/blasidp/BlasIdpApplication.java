@@ -12,7 +12,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @SpringBootApplication
 public class BlasIdpApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(BlasIdpApplication.class, args);
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(BlasIdpApplication.class, args);
+  }
 }

@@ -28,50 +28,50 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class AuthController {
 
-    @Autowired
-    private AuthUserDao authUserDao;
+  @Autowired
+  private AuthUserDao authUserDao;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+  @Autowired
+  private AuthenticationManager authenticationManager;
 
-    @Autowired
-    private JwtTokenUtil jwtTokenUtil;
+  @Autowired
+  private JwtTokenUtil jwtTokenUtil;
 
-    @Autowired
-    private JwtUserDetailsService userDetailsService;
+  @Autowired
+  private JwtUserDetailsService userDetailsService;
 
-    @PostMapping(value = "/auth/login")
-    public ResponseEntity<?> createAuthenticationToken(
-            @RequestBody JwtRequest authenticationRequest) {
-        authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(
-                authenticationRequest.getUsername());
-        return ResponseEntity.ok(new JwtResponse(jwtTokenUtil.generateToken(userDetails)));
-    }
+  @PostMapping(value = "/auth/login")
+  public ResponseEntity<?> createAuthenticationToken(
+      @RequestBody JwtRequest authenticationRequest) {
+    authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
+    final UserDetails userDetails = userDetailsService.loadUserByUsername(
+        authenticationRequest.getUsername());
+    return ResponseEntity.ok(new JwtResponse(jwtTokenUtil.generateToken(userDetails)));
+  }
 
-    private void authenticate(String username, String password) {
-        try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(username, password));
-            AuthUser authUser = authUserDao.getAuthUserByUsername(username);
-            if (authUser.getCountLoginFailed() > 0) {
-                authUser.setCountLoginFailed(0);
-                authUserDao.save(authUser);
-            }
-        } catch (DisabledException exception) {
-            throw new UnauthorizedException(ACCOUNT_INACTIVE);
-        } catch (LockedException exception) {
-            throw new ForbiddenException(ACCOUNT_BLOCKED);
-        } catch (BadCredentialsException exception) {
-            AuthUser authUser = authUserDao.getAuthUserByUsername(username);
-            if (authUser != null && authUser.getCountLoginFailed() < THRESHOLD_BLOCK_ACCOUNT) {
-                authUser.setCountLoginFailed(authUser.getCountLoginFailed() + 1);
-                if (authUser.getCountLoginFailed() == THRESHOLD_BLOCK_ACCOUNT) {
-                    authUser.setBlock(true);
-                }
-                authUserDao.save(authUser);
-            }
-            throw new UnauthorizedException(WRONG_CREDENTIAL);
+  private void authenticate(String username, String password) {
+    try {
+      authenticationManager.authenticate(
+          new UsernamePasswordAuthenticationToken(username, password));
+      AuthUser authUser = authUserDao.getAuthUserByUsername(username);
+      if (authUser.getCountLoginFailed() > 0) {
+        authUser.setCountLoginFailed(0);
+        authUserDao.save(authUser);
+      }
+    } catch (DisabledException exception) {
+      throw new UnauthorizedException(ACCOUNT_INACTIVE);
+    } catch (LockedException exception) {
+      throw new ForbiddenException(ACCOUNT_BLOCKED);
+    } catch (BadCredentialsException exception) {
+      AuthUser authUser = authUserDao.getAuthUserByUsername(username);
+      if (authUser != null && authUser.getCountLoginFailed() < THRESHOLD_BLOCK_ACCOUNT) {
+        authUser.setCountLoginFailed(authUser.getCountLoginFailed() + 1);
+        if (authUser.getCountLoginFailed() == THRESHOLD_BLOCK_ACCOUNT) {
+          authUser.setBlock(true);
         }
+        authUserDao.save(authUser);
+      }
+      throw new UnauthorizedException(WRONG_CREDENTIAL);
     }
+  }
 }

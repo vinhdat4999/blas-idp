@@ -5,13 +5,13 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://localhost:3306/blas
     username: root
-    password:
+    password: 123456
   jpa:
     hibernate:
       ddl-auto: none
     show-sql: 'true'
 jwt:
-  timeToExpired: 86400 #24h
+  timeToExpired: 8640000 #24h
 
 #logging:
 #  file:

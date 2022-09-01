@@ -17,30 +17,30 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    UserDetailsService jwtUserDetailsService;
+  @Autowired
+  UserDetailsService jwtUserDetailsService;
 
-    @Bean
-    public Sha256Encoder passwordEncoder() {
-        Sha256Encoder sha256Encoder = new Sha256Encoder();
-        return sha256Encoder;
-    }
+  @Bean
+  public Sha256Encoder passwordEncoder() {
+    Sha256Encoder sha256Encoder = new Sha256Encoder();
+    return sha256Encoder;
+  }
 
-    @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
+  @Bean
+  @Override
+  public AuthenticationManager authenticationManagerBean() throws Exception {
+    return super.authenticationManagerBean();
+  }
 
-    @Override
-    public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoder());
-    }
+  @Override
+  public void configure(AuthenticationManagerBuilder auth) throws Exception {
+    auth.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoder());
+  }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable();
-        http.authorizeRequests()
-                .antMatchers("/auth/**").permitAll();
-    }
+  @Override
+  protected void configure(HttpSecurity http) throws Exception {
+    http.csrf().disable();
+    http.authorizeRequests()
+        .antMatchers("/auth/**").permitAll();
+  }
 }
