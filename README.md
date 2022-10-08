@@ -4,6 +4,7 @@
 
 | Version | Date release | Tickets/Notes                       |
 |---------|--------------|-------------------------------------|
+| 1.7.0   | 09/10/2022   | Fix Sonarqube issues                |
 | 1.6.0   | 06/10/2022   | Update version                      |
 | 1.5.0   | 01/09/2022   | Enhance response body               |
 | 1.4.0   | 01/09/2022   | Enhance register feature            |

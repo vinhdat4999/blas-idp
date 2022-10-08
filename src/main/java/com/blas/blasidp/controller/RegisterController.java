@@ -1,4 +1,4 @@
-//package com.blas.blasidp.controller;
+package com.blas.blasidp.controller;
 //
 //import static com.blas.blascommon.utils.TimeUtils.getTimeNow;
 //import static com.blas.blasidp.constant.Authentication.REGISTER_SUCCESSFULLY;
