@@ -2,9 +2,6 @@ package com.blas.blasidp.constant;
 
 public class Authentication {
 
-  private Authentication() {
-  }
-
   public static final String WRONG_CREDENTIAL = "WRONG CREDENTIAL";
   public static final String ACCOUNT_INACTIVE = "ACCOUNT INACTIVE";
   public static final String ACCOUNT_BLOCKED = "ACCOUNT BLOCKED";
@@ -14,4 +11,7 @@ public class Authentication {
   public static final String VERIFY_FAILED = "VERIFY FAILED";
   public static final int THRESHOLD_BLOCK_ACCOUNT = 5;
   public static final String SUBJECT_EMAIL_AUTHEN_CODE = "BLAS VERIFICATION CODE";
+  public static final String AUTHORIZATION = "Authorization";
+  private Authentication() {
+  }
 }

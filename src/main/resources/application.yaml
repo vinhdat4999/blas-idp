@@ -9,9 +9,13 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
-    show-sql: 'true'
+    show-sql: true
 jwt:
   timeToExpired: 8640000 #100 days
+blas:
+  blas-email:
+    endpointHtmlEmail: http://localhost:8082/send-email/html
+    endpointHtmlEmailWithAttachments: http://localhost:8082/send-email/html-with-attachment
 
 #logging:
 #  file:
