@@ -1,5 +1,8 @@
 package com.blas.blasidp.constant;
 
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
 public class Authentication {
 
   public static final String WRONG_CREDENTIAL = "WRONG CREDENTIAL";
@@ -12,6 +15,4 @@ public class Authentication {
   public static final int THRESHOLD_BLOCK_ACCOUNT = 5;
   public static final String SUBJECT_EMAIL_AUTHEN_CODE = "BLAS VERIFICATION CODE";
   public static final String AUTHORIZATION = "Authorization";
-  private Authentication() {
-  }
 }

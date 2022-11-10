@@ -1,4 +1,4 @@
-package com.blas.blasidp.endpoint;
+package com.blas.blasidp.properties;
 
 import lombok.Getter;
 import lombok.Setter;

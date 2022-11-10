@@ -2,6 +2,8 @@ package com.blas.blasidp.controller;
 
 import static com.blas.blascommon.constants.Configuration.BLAS;
 import static com.blas.blascommon.constants.Response.CANNOT_CONNECT_TO_HOST;
+import static com.blas.blascommon.enums.BlasService.BLAS_IDP;
+import static com.blas.blascommon.enums.LogType.ERROR;
 import static com.blas.blascommon.security.SecurityUtils.base64Decode;
 import static com.blas.blascommon.utils.StringUtils.isBlank;
 import static com.blas.blascommon.utils.fileutils.FileUtils.writeByteArrayToFile;
@@ -12,22 +14,25 @@ import static com.blas.blasidp.constant.Authentication.SENT;
 import static com.blas.blasidp.constant.Authentication.SUBJECT_EMAIL_AUTHEN_CODE;
 import static com.blas.blasidp.constant.Authentication.VERIFY_FAILED;
 import static com.blas.blasidp.constant.Authentication.VERIFY_SUCCESSFULLY;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import com.blas.blascommon.core.model.AuthUser;
 import com.blas.blascommon.core.model.Role;
 import com.blas.blascommon.core.model.UserDetail;
 import com.blas.blascommon.core.service.AuthUserService;
 import com.blas.blascommon.core.service.AuthenKeyService;
+import com.blas.blascommon.core.service.CentralizedLogService;
 import com.blas.blascommon.exceptions.types.BadRequestException;
 import com.blas.blascommon.exceptions.types.ServiceUnavailableException;
 import com.blas.blascommon.payload.HtmlEmailRequest;
 import com.blas.blascommon.security.hash.Sha256Encoder;
-import com.blas.blasidp.endpoint.BlasEmailConfiguration;
 import com.blas.blasidp.payload.RegisterBody;
 import com.blas.blasidp.payload.VerifyAccountBody;
+import com.blas.blasidp.properties.BlasEmailConfiguration;
 import java.io.IOException;
 import java.util.List;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,10 +54,13 @@ public class RegisterController {
   @Autowired
   private BlasEmailConfiguration blasEmailConfiguration;
 
+  @Autowired
+  private CentralizedLogService centralizedLogService;
+
   @PostMapping(value = "/auth/register")
   public ResponseEntity<?> registerAccount(@RequestBody RegisterBody registerBody) {
     Role roleUser = new Role();
-    roleUser.setRoleId(com.blas.blascommon.constants.Role.USER.name());
+    roleUser.setRoleId(com.blas.blascommon.enums.Role.USER.name());
     AuthUser authUser = new AuthUser();
     authUser.setUsername(registerBody.getUsername());
     authUser.setPassword(passwordEncoder.encode(registerBody.getPassword()));
@@ -75,7 +83,6 @@ public class RegisterController {
       writeByteArrayToFile(base64Decode(registerBody.getAvatarBase64()), avatarPath);
       userDetail.setAvatarPath(avatarPath);
     }
-
     authUserService.createUser(authUser, userDetail);
 
     String authenKey = authenKeyService.createAuthenKey(authUser);
@@ -90,9 +97,12 @@ public class RegisterController {
       sendPostRequestWithJsonArrayPayloadGetJsonObjectResponse(host, null, null,
           new JSONArray(List.of(htmlEmailRequest)));
     } catch (IOException e) {
+      centralizedLogService.saveLog(BLAS_IDP.getServiceName(), ERROR, e.toString(),
+          e.getCause() == null ? EMPTY : e.getCause().toString(),
+          new JSONArray(List.of(htmlEmailRequest)).toString(), null, null,
+          String.valueOf(new JSONArray(e.getStackTrace())));
       throw new ServiceUnavailableException(CANNOT_CONNECT_TO_HOST);
     }
-
     return ResponseEntity.ok(REGISTER_SUCCESSFULLY);
   }
 
@@ -110,7 +120,11 @@ public class RegisterController {
     try {
       sendPostRequestWithJsonArrayPayloadGetJsonObjectResponse(host, null, null,
           new JSONArray(List.of(htmlEmailRequest)));
-    } catch (IOException e) {
+    } catch (IOException | JSONException e) {
+      centralizedLogService.saveLog(BLAS_IDP.getServiceName(), ERROR, e.toString(),
+          e.getCause() == null ? EMPTY : e.getCause().toString(),
+          new JSONArray(List.of(htmlEmailRequest)).toString(), null, null,
+          String.valueOf(new JSONArray(e.getStackTrace())));
       throw new ServiceUnavailableException(CANNOT_CONNECT_TO_HOST);
     }
     return ResponseEntity.ok(SENT);
