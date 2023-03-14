@@ -1,11 +1,10 @@
 package com.blas.blasidp.controller;
 
-import static com.blas.blascommon.constants.Configuration.BLAS;
+import static com.blas.blascommon.constants.BlasConstant.BLAS;
 import static com.blas.blascommon.constants.Response.CANNOT_CONNECT_TO_HOST;
 import static com.blas.blascommon.enums.BlasService.BLAS_IDP;
 import static com.blas.blascommon.enums.LogType.ERROR;
 import static com.blas.blascommon.security.SecurityUtils.base64Decode;
-import static com.blas.blascommon.utils.StringUtils.isBlank;
 import static com.blas.blascommon.utils.fileutils.FileUtils.writeByteArrayToFile;
 import static com.blas.blascommon.utils.httprequest.PostRequest.sendPostRequestWithJsonArrayPayloadGetJsonObjectResponse;
 import static com.blas.blascommon.utils.timeutils.TimeUtils.getTimeNow;
@@ -15,6 +14,7 @@ import static com.blas.blasidp.constant.Authentication.SUBJECT_EMAIL_AUTHEN_CODE
 import static com.blas.blasidp.constant.Authentication.VERIFY_FAILED;
 import static com.blas.blasidp.constant.Authentication.VERIFY_SUCCESSFULLY;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import com.blas.blascommon.core.model.AuthUser;
 import com.blas.blascommon.core.model.Role;
@@ -34,6 +34,7 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,6 +42,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class RegisterController {
+
+  @Value("${blas.blas-idp.isSendEmailAlert}")
+  private boolean isSendEmailAlert;
 
   @Autowired
   private AuthenKeyService authenKeyService;
@@ -100,7 +104,7 @@ public class RegisterController {
       centralizedLogService.saveLog(BLAS_IDP.getServiceName(), ERROR, e.toString(),
           e.getCause() == null ? EMPTY : e.getCause().toString(),
           new JSONArray(List.of(htmlEmailRequest)).toString(), null, null,
-          String.valueOf(new JSONArray(e.getStackTrace())));
+          String.valueOf(new JSONArray(e.getStackTrace())), isSendEmailAlert);
       throw new ServiceUnavailableException(CANNOT_CONNECT_TO_HOST);
     }
     return ResponseEntity.ok(REGISTER_SUCCESSFULLY);
@@ -124,7 +128,7 @@ public class RegisterController {
       centralizedLogService.saveLog(BLAS_IDP.getServiceName(), ERROR, e.toString(),
           e.getCause() == null ? EMPTY : e.getCause().toString(),
           new JSONArray(List.of(htmlEmailRequest)).toString(), null, null,
-          String.valueOf(new JSONArray(e.getStackTrace())));
+          String.valueOf(new JSONArray(e.getStackTrace())), isSendEmailAlert);
       throw new ServiceUnavailableException(CANNOT_CONNECT_TO_HOST);
     }
     return ResponseEntity.ok(SENT);
