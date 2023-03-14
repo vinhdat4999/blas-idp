@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -19,7 +20,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebSecurityConfig {
 
   @Bean
-  public Sha256Encoder passwordEncoder() {
+  public PasswordEncoder passwordEncoder() {
     return new Sha256Encoder();
   }
 
@@ -28,7 +29,9 @@ public class WebSecurityConfig {
       UserDetailsService jwtUserDetailsService) throws Exception {
     AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(
         AuthenticationManagerBuilder.class);
-    authenticationManagerBuilder.userDetailsService(jwtUserDetailsService)
+    authenticationManagerBuilder
+        .parentAuthenticationManager(null)
+        .userDetailsService(jwtUserDetailsService)
         .passwordEncoder(passwordEncoder());
     return authenticationManagerBuilder.build();
   }
