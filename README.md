@@ -4,6 +4,7 @@
 
 | Version | Date release | Tickets/Notes                           |
 |---------|--------------|-----------------------------------------|
+| 1.12.0  | 19/03/2023   | Support monitoring blas-email           |
 | 1.11.0  | 17/03/2023   | Support email template                  |
 | 1.10.0  | 15/03/2023   | Fix bug                                 |
 | 1.9.0   | 10/11/2022   | Apply Centralized Logger                |
