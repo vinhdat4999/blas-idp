@@ -27,11 +27,13 @@ import com.blas.blascommon.core.service.AuthenKeyService;
 import com.blas.blascommon.core.service.CentralizedLogService;
 import com.blas.blascommon.exceptions.types.BadRequestException;
 import com.blas.blascommon.exceptions.types.ServiceUnavailableException;
+import com.blas.blascommon.jwt.JwtTokenUtil;
+import com.blas.blascommon.jwt.JwtUserDetailsService;
 import com.blas.blascommon.payload.HtmlEmailRequest;
+import com.blas.blascommon.properties.BlasEmailConfiguration;
 import com.blas.blascommon.security.hash.Sha256Encoder;
 import com.blas.blasidp.payload.RegisterBody;
 import com.blas.blasidp.payload.VerifyAccountBody;
-import com.blas.blasidp.properties.BlasEmailConfiguration;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +66,12 @@ public class RegisterController {
 
   @Autowired
   private CentralizedLogService centralizedLogService;
+
+  @Autowired
+  private JwtTokenUtil jwtTokenUtil;
+
+  @Autowired
+  private JwtUserDetailsService userDetailsService;
 
   @PostMapping(value = "/auth/register")
   public ResponseEntity<String> registerAccount(@RequestBody RegisterBody registerBody) {
@@ -124,8 +132,8 @@ public class RegisterController {
     htmlEmailRequest.setData(Map.of(AUTHEN_KEY, authenKeyService.createAuthenKey(authUser)));
     try {
       sendPostRequestWithJsonArrayPayloadGetJsonObjectResponse(
-          blasEmailConfiguration.getEndpointHtmlEmail(), null, null,
-          new JSONArray(List.of(htmlEmailRequest)));
+          blasEmailConfiguration.getEndpointHtmlEmail(), null,
+          jwtTokenUtil.generateInternalSystemToken(), new JSONArray(List.of(htmlEmailRequest)));
     } catch (IOException | JSONException e) {
       centralizedLogService.saveLog(BLAS_IDP.getServiceName(), ERROR, e.toString(),
           e.getCause() == null ? EMPTY : e.getCause().toString(),
