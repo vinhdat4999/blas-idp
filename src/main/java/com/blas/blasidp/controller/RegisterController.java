@@ -74,7 +74,8 @@ public class RegisterController {
   private JwtUserDetailsService userDetailsService;
 
   @PostMapping(value = "/auth/register")
-  public ResponseEntity<String> registerAccount(@RequestBody RegisterBody registerBody) {
+  public ResponseEntity<String> registerAccount(@RequestBody RegisterBody registerBody)
+      throws IOException {
     Role roleUser = new Role();
     roleUser.setRoleId(com.blas.blascommon.enums.Role.USER.name());
     AuthUser authUser = new AuthUser();
