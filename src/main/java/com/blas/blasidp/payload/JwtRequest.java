@@ -1,6 +1,6 @@
 package com.blas.blasidp.payload;
 
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
