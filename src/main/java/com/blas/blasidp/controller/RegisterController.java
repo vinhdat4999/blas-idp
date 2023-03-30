@@ -28,7 +28,6 @@ import com.blas.blascommon.core.service.CentralizedLogService;
 import com.blas.blascommon.exceptions.types.BadRequestException;
 import com.blas.blascommon.exceptions.types.ServiceUnavailableException;
 import com.blas.blascommon.jwt.JwtTokenUtil;
-import com.blas.blascommon.jwt.JwtUserDetailsService;
 import com.blas.blascommon.payload.HtmlEmailRequest;
 import com.blas.blascommon.properties.BlasEmailConfiguration;
 import com.blas.blascommon.security.hash.Sha256Encoder;
@@ -41,6 +40,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -52,26 +52,29 @@ public class RegisterController {
   @Value("${blas.blas-idp.isSendEmailAlert}")
   private boolean isSendEmailAlert;
 
+  @Lazy
   @Autowired
   private AuthenKeyService authenKeyService;
 
+  @Lazy
   @Autowired
   private AuthUserService authUserService;
 
+  @Lazy
   @Autowired
   private Sha256Encoder passwordEncoder;
 
+  @Lazy
   @Autowired
   private BlasEmailConfiguration blasEmailConfiguration;
 
+  @Lazy
   @Autowired
   private CentralizedLogService centralizedLogService;
 
+  @Lazy
   @Autowired
   private JwtTokenUtil jwtTokenUtil;
-
-  @Autowired
-  private JwtUserDetailsService userDetailsService;
 
   @PostMapping(value = "/auth/register")
   public ResponseEntity<String> registerAccount(@RequestBody RegisterBody registerBody)
@@ -111,8 +114,8 @@ public class RegisterController {
     htmlEmailRequest.setData(Map.of(AUTHEN_KEY, authenKeyService.createAuthenKey(authUser)));
 
     try {
-      sendPostRequestWithJsonArrayPayloadGetJsonObjectResponse(host, null, null,
-          new JSONArray(List.of(htmlEmailRequest)));
+      sendPostRequestWithJsonArrayPayloadGetJsonObjectResponse(host, null,
+          jwtTokenUtil.generateInternalSystemToken(), new JSONArray(List.of(htmlEmailRequest)));
     } catch (IOException e) {
       centralizedLogService.saveLog(BLAS_IDP.getServiceName(), ERROR, e.toString(),
           e.getCause() == null ? EMPTY : e.getCause().toString(),

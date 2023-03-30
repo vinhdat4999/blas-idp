@@ -16,6 +16,7 @@ import com.blas.blasidp.payload.JwtRequest;
 import com.blas.blasidp.payload.JwtResponse;
 import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -30,18 +31,22 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class AuthController {
 
+  @Lazy
   @Autowired
   private AuthUserDao authUserDao;
 
+  @Lazy
   @Autowired
   private AuthenticationManager authenticationManager;
 
+  @Lazy
   @Autowired
   private JwtTokenUtil jwtTokenUtil;
 
   @Autowired
   private JwtUserDetailsService userDetailsService;
 
+  @Lazy
   @Autowired
   private JwtConfigurationProperties jwtConfigurationProperties;
 
