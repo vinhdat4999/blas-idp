@@ -11,6 +11,11 @@ spring:
       ddl-auto: none
     show-sql: true
 blas:
+  service:
+    serviceName: blas-idp
+  gate-interceptor:
+    enableLogRequest: true
+    enableLogLocalRequest: true
   blas-idp:
     isSendEmailAlert: true
     jwt:
