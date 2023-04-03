@@ -7,7 +7,7 @@ import static com.blas.blascommon.enums.FileType.JPG;
 import static com.blas.blascommon.enums.LogType.ERROR;
 import static com.blas.blascommon.security.SecurityUtils.base64Decode;
 import static com.blas.blascommon.utils.fileutils.FileUtils.writeByteArrayToFile;
-import static com.blas.blascommon.utils.httprequest.PostRequest.sendPostRequestWithJsonArrayPayloadGetJsonObjectResponse;
+import static com.blas.blascommon.utils.httprequest.PostRequest.sendPostRequestWithJsonArrayPayload;
 import static com.blas.blascommon.utils.timeutils.TimeUtils.getTimeNow;
 import static com.blas.blasidp.constant.Authentication.AUTHEN_KEY;
 import static com.blas.blasidp.constant.Authentication.REGISTER_SUCCESSFULLY;
@@ -114,7 +114,7 @@ public class RegisterController {
     htmlEmailRequest.setData(Map.of(AUTHEN_KEY, authenKeyService.createAuthenKey(authUser)));
 
     try {
-      sendPostRequestWithJsonArrayPayloadGetJsonObjectResponse(host, null,
+      sendPostRequestWithJsonArrayPayload(host, null,
           jwtTokenUtil.generateInternalSystemToken(), new JSONArray(List.of(htmlEmailRequest)));
     } catch (IOException e) {
       centralizedLogService.saveLog(BLAS_IDP.getServiceName(), ERROR, e.toString(),
@@ -135,7 +135,7 @@ public class RegisterController {
     htmlEmailRequest.setEmailTemplateName(TEMPLATE_RESEND_KEY);
     htmlEmailRequest.setData(Map.of(AUTHEN_KEY, authenKeyService.createAuthenKey(authUser)));
     try {
-      sendPostRequestWithJsonArrayPayloadGetJsonObjectResponse(
+      sendPostRequestWithJsonArrayPayload(
           blasEmailConfiguration.getEndpointHtmlEmail(), null,
           jwtTokenUtil.generateInternalSystemToken(), new JSONArray(List.of(htmlEmailRequest)));
     } catch (IOException | JSONException e) {
