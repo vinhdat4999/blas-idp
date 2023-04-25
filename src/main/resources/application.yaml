@@ -11,11 +11,13 @@ spring:
       ddl-auto: none
     show-sql: true
 blas:
+  aliasBlasPrivateKey: blasSecretKey
+  certificate: BlasSecretKey.p12
   service:
     serviceName: blas-idp
   gate-interceptor:
     enableLogRequest: true
-    enableLogLocalRequest: true
+    enableLogLocalRequest: false
   blas-idp:
     isSendEmailAlert: true
     jwt:
