@@ -3,19 +3,19 @@ package com.blas.blasidp.controller;
 import static com.blas.blascommon.constants.BlasConstant.BLAS;
 import static com.blas.blascommon.constants.Response.CANNOT_CONNECT_TO_HOST;
 import static com.blas.blascommon.enums.BlasService.BLAS_IDP;
+import static com.blas.blascommon.enums.EmailTemplate.RESEND_KEY;
 import static com.blas.blascommon.enums.FileType.JPG;
 import static com.blas.blascommon.enums.LogType.ERROR;
 import static com.blas.blascommon.security.SecurityUtils.base64Decode;
 import static com.blas.blascommon.utils.fileutils.FileUtils.writeByteArrayToFile;
 import static com.blas.blascommon.utils.httprequest.PostRequest.sendPostRequestWithJsonArrayPayload;
-import static com.blas.blascommon.utils.timeutils.TimeUtils.getTimeNow;
 import static com.blas.blasidp.constant.Authentication.AUTHEN_KEY;
 import static com.blas.blasidp.constant.Authentication.REGISTER_SUCCESSFULLY;
 import static com.blas.blasidp.constant.Authentication.SENT;
 import static com.blas.blasidp.constant.Authentication.SUBJECT_EMAIL_AUTHEN_CODE;
-import static com.blas.blasidp.constant.Authentication.TEMPLATE_RESEND_KEY;
 import static com.blas.blasidp.constant.Authentication.VERIFY_FAILED;
 import static com.blas.blasidp.constant.Authentication.VERIFY_SUCCESSFULLY;
+import static java.time.LocalDateTime.now;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -110,12 +110,12 @@ public class RegisterController {
     HtmlEmailRequest htmlEmailRequest = new HtmlEmailRequest();
     htmlEmailRequest.setEmailTo(userDetail.getEmail());
     htmlEmailRequest.setTitle(SUBJECT_EMAIL_AUTHEN_CODE);
-    htmlEmailRequest.setEmailTemplateName(TEMPLATE_RESEND_KEY);
+    htmlEmailRequest.setEmailTemplateName(RESEND_KEY.name());
     htmlEmailRequest.setData(Map.of(AUTHEN_KEY, authenKeyService.createAuthenKey(authUser)));
 
     try {
-      sendPostRequestWithJsonArrayPayload(host, null,
-          jwtTokenUtil.generateInternalSystemToken(), new JSONArray(List.of(htmlEmailRequest)));
+      sendPostRequestWithJsonArrayPayload(host, null, jwtTokenUtil.generateInternalSystemToken(),
+          new JSONArray(List.of(htmlEmailRequest)));
     } catch (IOException e) {
       centralizedLogService.saveLog(BLAS_IDP.getServiceName(), ERROR, e.toString(),
           e.getCause() == null ? EMPTY : e.getCause().toString(),
@@ -132,11 +132,10 @@ public class RegisterController {
     HtmlEmailRequest htmlEmailRequest = new HtmlEmailRequest();
     htmlEmailRequest.setEmailTo(authUser.getUserDetail().getEmail());
     htmlEmailRequest.setTitle(SUBJECT_EMAIL_AUTHEN_CODE);
-    htmlEmailRequest.setEmailTemplateName(TEMPLATE_RESEND_KEY);
+    htmlEmailRequest.setEmailTemplateName(RESEND_KEY.name());
     htmlEmailRequest.setData(Map.of(AUTHEN_KEY, authenKeyService.createAuthenKey(authUser)));
     try {
-      sendPostRequestWithJsonArrayPayload(
-          blasEmailConfiguration.getEndpointHtmlEmail(), null,
+      sendPostRequestWithJsonArrayPayload(blasEmailConfiguration.getEndpointHtmlEmail(), null,
           jwtTokenUtil.generateInternalSystemToken(), new JSONArray(List.of(htmlEmailRequest)));
     } catch (IOException | JSONException e) {
       centralizedLogService.saveLog(BLAS_IDP.getServiceName(), ERROR, e.toString(),
@@ -151,7 +150,7 @@ public class RegisterController {
   @PostMapping(value = "/auth/verify-new-account")
   public ResponseEntity<String> verifyNewAccount(@RequestBody VerifyAccountBody verifyAccountBody) {
     if (authenKeyService.isValidAuthenKey(verifyAccountBody.getUserId(),
-        verifyAccountBody.getAuthenKey(), getTimeNow())) {
+        verifyAccountBody.getAuthenKey(), now())) {
       AuthUser authUser = authUserService.getAuthUserByUserId(verifyAccountBody.getUserId());
       authenKeyService.useAuthenKey(authUser);
       authUser.setActive(true);

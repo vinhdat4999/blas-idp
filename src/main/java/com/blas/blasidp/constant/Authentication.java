@@ -16,5 +16,4 @@ public class Authentication {
   public static final String SUBJECT_EMAIL_AUTHEN_CODE = "BLAS VERIFICATION CODE";
   public static final String AUTHORIZATION = "Authorization";
   public static final String AUTHEN_KEY = "authenKey";
-  public static final String TEMPLATE_RESEND_KEY = "resend-key";
 }
