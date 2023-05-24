@@ -42,6 +42,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -51,6 +52,9 @@ public class RegisterController {
 
   @Value("${blas.blas-idp.isSendEmailAlert}")
   private boolean isSendEmailAlert;
+
+  @Value("${blas.service.serviceName}")
+  private String serviceName;
 
   @Lazy
   @Autowired
@@ -75,6 +79,11 @@ public class RegisterController {
   @Lazy
   @Autowired
   private JwtTokenUtil jwtTokenUtil;
+
+  @GetMapping(value = "/test")
+  public String a() {
+    return "test";
+  }
 
   @PostMapping(value = "/auth/register")
   public ResponseEntity<String> registerAccount(@RequestBody RegisterBody registerBody)
@@ -138,7 +147,7 @@ public class RegisterController {
       sendPostRequestWithJsonArrayPayload(blasEmailConfiguration.getEndpointHtmlEmail(), null,
           jwtTokenUtil.generateInternalSystemToken(), new JSONArray(List.of(htmlEmailRequest)));
     } catch (IOException | JSONException e) {
-      centralizedLogService.saveLog(BLAS_IDP.getServiceName(), ERROR, e.toString(),
+      centralizedLogService.saveLog(serviceName, ERROR, e.toString(),
           e.getCause() == null ? EMPTY : e.getCause().toString(),
           new JSONArray(List.of(htmlEmailRequest)).toString(), null, null,
           String.valueOf(new JSONArray(e.getStackTrace())), isSendEmailAlert);
