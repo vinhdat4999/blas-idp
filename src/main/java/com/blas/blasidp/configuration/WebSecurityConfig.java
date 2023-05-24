@@ -44,11 +44,8 @@ public class WebSecurityConfig {
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(authorize -> authorize
             .requestMatchers("/auth/**").permitAll()
-            .anyRequest().authenticated()
-        ).headers(headers -> headers
-            .frameOptions(FrameOptionsConfig::sameOrigin
-            )
-        )
+            .anyRequest().authenticated())
+        .headers(headers -> headers.frameOptions(FrameOptionsConfig::sameOrigin))
         .build();
   }
 
