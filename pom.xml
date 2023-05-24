@@ -6,11 +6,11 @@
   <parent>
     <groupId>com.blas</groupId>
     <artifactId>blas-pom</artifactId>
-    <version>1.2.0</version>
+    <version>1.4.0</version>
     <relativePath></relativePath>
   </parent>
   <artifactId>blas-idp</artifactId>
-  <version>1.16.0</version>
+  <version>1.17.0</version>
   <name>blas-idp</name>
   <description>blas-idp</description>
   <properties>
@@ -22,7 +22,7 @@
     <dependency>
       <groupId>com.blas</groupId>
       <artifactId>blas-common</artifactId>
-      <version>2.6.0</version>
+      <version>2.10.0</version>
     </dependency>
     <dependency>
       <groupId>mysql</groupId>
