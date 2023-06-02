@@ -9,6 +9,7 @@ import static com.blas.blascommon.enums.LogType.ERROR;
 import static com.blas.blascommon.security.SecurityUtils.base64Decode;
 import static com.blas.blascommon.utils.fileutils.FileUtils.writeByteArrayToFile;
 import static com.blas.blascommon.utils.httprequest.PostRequest.sendPostRequestWithJsonArrayPayload;
+import static com.blas.blasidp.constant.Authentication.ACCOUNT_ALREADY_ACTIVE;
 import static com.blas.blasidp.constant.Authentication.AUTHEN_KEY;
 import static com.blas.blasidp.constant.Authentication.REGISTER_SUCCESSFULLY;
 import static com.blas.blasidp.constant.Authentication.SENT;
@@ -26,6 +27,7 @@ import com.blas.blascommon.core.service.AuthUserService;
 import com.blas.blascommon.core.service.AuthenKeyService;
 import com.blas.blascommon.core.service.CentralizedLogService;
 import com.blas.blascommon.exceptions.types.BadRequestException;
+import com.blas.blascommon.exceptions.types.ForbiddenException;
 import com.blas.blascommon.exceptions.types.ServiceUnavailableException;
 import com.blas.blascommon.jwt.JwtTokenUtil;
 import com.blas.blascommon.payload.HtmlEmailRequest;
@@ -42,7 +44,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -79,11 +80,6 @@ public class RegisterController {
   @Lazy
   @Autowired
   private JwtTokenUtil jwtTokenUtil;
-
-  @GetMapping(value = "/test")
-  public String a() {
-    return "test";
-  }
 
   @PostMapping(value = "/auth/register")
   public ResponseEntity<String> registerAccount(@RequestBody RegisterBody registerBody)
@@ -138,6 +134,9 @@ public class RegisterController {
   @PostMapping(value = "/auth/resend-key")
   public ResponseEntity<String> resendAuthenKey(@RequestBody String userId) {
     AuthUser authUser = authUserService.getAuthUserByUserId(userId);
+    if (authUser.isActive()) {
+      throw new ForbiddenException(ACCOUNT_ALREADY_ACTIVE);
+    }
     HtmlEmailRequest htmlEmailRequest = new HtmlEmailRequest();
     htmlEmailRequest.setEmailTo(authUser.getUserDetail().getEmail());
     htmlEmailRequest.setTitle(SUBJECT_EMAIL_AUTHEN_CODE);
@@ -161,6 +160,9 @@ public class RegisterController {
     if (authenKeyService.isValidAuthenKey(verifyAccountBody.getUserId(),
         verifyAccountBody.getAuthenKey(), now())) {
       AuthUser authUser = authUserService.getAuthUserByUserId(verifyAccountBody.getUserId());
+      if (authUser.isActive()) {
+        throw new ForbiddenException(ACCOUNT_ALREADY_ACTIVE);
+      }
       authenKeyService.useAuthenKey(authUser);
       authUser.setActive(true);
       authUserService.updateAuthUser(authUser);

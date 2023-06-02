@@ -12,6 +12,7 @@ public class Authentication {
   public static final String VERIFY_SUCCESSFULLY = "VERIFY SUCCESSFULLY";
   public static final String SENT = "SENT";
   public static final String VERIFY_FAILED = "VERIFY FAILED";
+  public static final String ACCOUNT_ALREADY_ACTIVE = "ACCOUNT ALREADY ACTIVE";
   public static final int THRESHOLD_BLOCK_ACCOUNT = 5;
   public static final String SUBJECT_EMAIL_AUTHEN_CODE = "BLAS VERIFICATION CODE";
   public static final String AUTHORIZATION = "Authorization";
