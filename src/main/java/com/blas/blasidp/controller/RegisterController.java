@@ -2,6 +2,7 @@ package com.blas.blasidp.controller;
 
 import static com.blas.blascommon.constants.BlasConstant.BLAS;
 import static com.blas.blascommon.constants.Response.CANNOT_CONNECT_TO_HOST;
+import static com.blas.blascommon.constants.Response.HTTP_STATUS_NOT_200;
 import static com.blas.blascommon.enums.EmailTemplate.RESEND_KEY;
 import static com.blas.blascommon.enums.FileType.JPG;
 import static com.blas.blascommon.enums.LogType.ERROR;
@@ -30,6 +31,7 @@ import com.blas.blascommon.exceptions.types.ForbiddenException;
 import com.blas.blascommon.exceptions.types.ServiceUnavailableException;
 import com.blas.blascommon.jwt.JwtTokenUtil;
 import com.blas.blascommon.payload.HtmlEmailRequest;
+import com.blas.blascommon.payload.HttpResponse;
 import com.blas.blascommon.properties.BlasEmailConfiguration;
 import com.blas.blascommon.security.hash.Sha256Encoder;
 import com.blas.blasidp.payload.RegisterBody;
@@ -42,6 +44,7 @@ import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -118,9 +121,12 @@ public class RegisterController {
     htmlEmailRequest.setData(Map.of(AUTHEN_KEY, authenKeyService.createAuthenKey(authUser)));
 
     try {
-      sendPostRequestWithJsonArrayPayload(host, null, jwtTokenUtil.generateInternalSystemToken(),
-          new JSONArray(List.of(htmlEmailRequest)));
-    } catch (IOException exception) {
+      HttpResponse response = sendPostRequestWithJsonArrayPayload(host, null,
+          jwtTokenUtil.generateInternalSystemToken(), new JSONArray(List.of(htmlEmailRequest)));
+      if (response.getStatusCode() != HttpStatus.OK.value()) {
+        throw new BadRequestException(HTTP_STATUS_NOT_200);
+      }
+    } catch (IOException | BadRequestException exception) {
       centralizedLogService.saveLog(serviceName, ERROR, exception.toString(),
           exception.getCause() == null ? EMPTY : exception.getCause().toString(),
           new JSONArray(List.of(htmlEmailRequest)).toString(), null, null,
@@ -142,9 +148,13 @@ public class RegisterController {
     htmlEmailRequest.setEmailTemplateName(RESEND_KEY.name());
     htmlEmailRequest.setData(Map.of(AUTHEN_KEY, authenKeyService.createAuthenKey(authUser)));
     try {
-      sendPostRequestWithJsonArrayPayload(blasEmailConfiguration.getEndpointHtmlEmail(), null,
+      HttpResponse response = sendPostRequestWithJsonArrayPayload(
+          blasEmailConfiguration.getEndpointHtmlEmail(), null,
           jwtTokenUtil.generateInternalSystemToken(), new JSONArray(List.of(htmlEmailRequest)));
-    } catch (IOException | JSONException e) {
+      if (response.getStatusCode() != HttpStatus.OK.value()) {
+        throw new BadRequestException(HTTP_STATUS_NOT_200);
+      }
+    } catch (IOException | JSONException | BadRequestException e) {
       centralizedLogService.saveLog(serviceName, ERROR, e.toString(),
           e.getCause() == null ? EMPTY : e.getCause().toString(),
           new JSONArray(List.of(htmlEmailRequest)).toString(), null, null,
