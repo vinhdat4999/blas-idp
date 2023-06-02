@@ -4,6 +4,7 @@
 
 | Version | Date release | Tickets/Notes                           |
 |---------|--------------|-----------------------------------------|
+| 1.19.0  | 02/06/2023   | Upgrade blas-common 3.0.0               |
 | 1.18.0  | 02/06/2023   | Fix account already active              |
 | 1.17.0  | 25/05/2023   | Upgrade spring boot 3.1.0               |
 | 1.16.0  | 25/04/2023   | Uptake blas-common 2.6.0                |

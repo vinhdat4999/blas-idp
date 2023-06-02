@@ -2,7 +2,6 @@ package com.blas.blasidp.controller;
 
 import static com.blas.blascommon.constants.BlasConstant.BLAS;
 import static com.blas.blascommon.constants.Response.CANNOT_CONNECT_TO_HOST;
-import static com.blas.blascommon.enums.BlasService.BLAS_IDP;
 import static com.blas.blascommon.enums.EmailTemplate.RESEND_KEY;
 import static com.blas.blascommon.enums.FileType.JPG;
 import static com.blas.blascommon.enums.LogType.ERROR;
@@ -121,11 +120,11 @@ public class RegisterController {
     try {
       sendPostRequestWithJsonArrayPayload(host, null, jwtTokenUtil.generateInternalSystemToken(),
           new JSONArray(List.of(htmlEmailRequest)));
-    } catch (IOException e) {
-      centralizedLogService.saveLog(BLAS_IDP.getServiceName(), ERROR, e.toString(),
-          e.getCause() == null ? EMPTY : e.getCause().toString(),
+    } catch (IOException exception) {
+      centralizedLogService.saveLog(serviceName, ERROR, exception.toString(),
+          exception.getCause() == null ? EMPTY : exception.getCause().toString(),
           new JSONArray(List.of(htmlEmailRequest)).toString(), null, null,
-          String.valueOf(new JSONArray(e.getStackTrace())), isSendEmailAlert);
+          String.valueOf(new JSONArray(exception.getStackTrace())), isSendEmailAlert);
       throw new ServiceUnavailableException(CANNOT_CONNECT_TO_HOST);
     }
     return ResponseEntity.ok(REGISTER_SUCCESSFULLY);
