@@ -34,11 +34,23 @@ import com.blas.blascommon.payload.HtmlEmailRequest;
 import com.blas.blascommon.payload.HttpResponse;
 import com.blas.blascommon.properties.BlasEmailConfiguration;
 import com.blas.blascommon.security.hash.Sha256Encoder;
+import com.blas.blascommon.utils.TelegramUtils;
 import com.blas.blasidp.payload.RegisterBody;
 import com.blas.blasidp.payload.VerifyAccountBody;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.util.List;
 import java.util.Map;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,8 +62,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 public class RegisterController {
+
+  private static final String TELEGRAM_AUTHEN_KEY_MSG = "Do not disclose the verification code to anyone. Your authentication code will expire in 20 minutes. Your verification: ";
 
   @Value("${blas.blas-idp.isSendEmailAlert}")
   private boolean isSendEmailAlert;
@@ -82,6 +97,10 @@ public class RegisterController {
   @Lazy
   @Autowired
   private JwtTokenUtil jwtTokenUtil;
+
+  @Lazy
+  @Autowired
+  private TelegramUtils telegramUtils;
 
   @PostMapping(value = "/auth/register")
   public ResponseEntity<String> registerAccount(@RequestBody RegisterBody registerBody)
@@ -142,11 +161,23 @@ public class RegisterController {
     if (authUser.isActive()) {
       throw new ForbiddenException(ACCOUNT_ALREADY_ACTIVE);
     }
+
+    final String authenKey = authenKeyService.createAuthenKey(authUser);
+    try {
+      telegramUtils.sendTelegramMessage(TELEGRAM_AUTHEN_KEY_MSG + authenKey,
+          authUser.getUserDetail().getTelegramChatId());
+    } catch (URISyntaxException | InvalidAlgorithmParameterException | UnrecoverableKeyException |
+             IllegalBlockSizeException | NoSuchPaddingException | CertificateException |
+             KeyStoreException | NoSuchAlgorithmException | BadPaddingException |
+             InvalidKeyException | IOException exception) {
+      log.error(exception.toString());
+    }
+
     HtmlEmailRequest htmlEmailRequest = new HtmlEmailRequest();
     htmlEmailRequest.setEmailTo(authUser.getUserDetail().getEmail());
     htmlEmailRequest.setTitle(SUBJECT_EMAIL_AUTHEN_CODE);
     htmlEmailRequest.setEmailTemplateName(RESEND_KEY.name());
-    htmlEmailRequest.setData(Map.of(AUTHEN_KEY, authenKeyService.createAuthenKey(authUser)));
+    htmlEmailRequest.setData(Map.of(AUTHEN_KEY, authenKey));
     try {
       HttpResponse response = sendPostRequestWithJsonArrayPayload(
           blasEmailConfiguration.getEndpointHtmlEmail(), null,
