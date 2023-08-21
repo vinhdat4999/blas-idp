@@ -12,7 +12,7 @@ import static com.blas.blascommon.utils.httprequest.PostRequest.sendPostRequestW
 import static com.blas.blasidp.constant.Authentication.ACCOUNT_ALREADY_ACTIVE;
 import static com.blas.blasidp.constant.Authentication.AUTHEN_KEY;
 import static com.blas.blasidp.constant.Authentication.REGISTER_SUCCESSFULLY;
-import static com.blas.blasidp.constant.Authentication.SENT;
+import static com.blas.blasidp.constant.Authentication.SENT_AUTHEN_EMAIL;
 import static com.blas.blasidp.constant.Authentication.SUBJECT_EMAIL_AUTHEN_CODE;
 import static com.blas.blasidp.constant.Authentication.VERIFY_FAILED;
 import static com.blas.blasidp.constant.Authentication.VERIFY_SUCCESSFULLY;
@@ -156,8 +156,8 @@ public class RegisterController {
   }
 
   @PostMapping(value = "/auth/resend-key")
-  public ResponseEntity<String> resendAuthenKey(@RequestBody String userId) {
-    AuthUser authUser = authUserService.getAuthUserByUserId(userId);
+  public ResponseEntity<String> resendAuthenKey(@RequestBody String username) {
+    AuthUser authUser = authUserService.getAuthUserByUsername(username);
     if (authUser.isActive()) {
       throw new ForbiddenException(ACCOUNT_ALREADY_ACTIVE);
     }
@@ -192,14 +192,14 @@ public class RegisterController {
           String.valueOf(new JSONArray(e.getStackTrace())), isSendEmailAlert);
       throw new ServiceUnavailableException(CANNOT_CONNECT_TO_HOST);
     }
-    return ResponseEntity.ok(SENT);
+    return ResponseEntity.ok(SENT_AUTHEN_EMAIL);
   }
 
   @PostMapping(value = "/auth/verify-new-account")
   public ResponseEntity<String> verifyNewAccount(@RequestBody VerifyAccountBody verifyAccountBody) {
-    if (authenKeyService.isValidAuthenKey(verifyAccountBody.getUserId(),
+    if (authenKeyService.isValidAuthenKey(verifyAccountBody.getUsername(),
         verifyAccountBody.getAuthenKey(), now())) {
-      AuthUser authUser = authUserService.getAuthUserByUserId(verifyAccountBody.getUserId());
+      AuthUser authUser = authUserService.getAuthUserByUsername(verifyAccountBody.getUsername());
       if (authUser.isActive()) {
         throw new ForbiddenException(ACCOUNT_ALREADY_ACTIVE);
       }

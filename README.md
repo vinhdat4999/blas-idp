@@ -4,6 +4,7 @@
 
 | Version | Date release | Tickets/Notes                                           |
 |---------|--------------|---------------------------------------------------------|
+| 1.22.0  | 21/08/2023   | Change to user username to verify account               |
 | 1.21.0  | 31/07/2023   | Support Telegram message                                |
 | 1.20.0  | 12/06/2023   | Support check maintenance time and Spring boot actuator |
 | 1.19.0  | 02/06/2023   | Upgrade blas-common 3.0.0                               |
