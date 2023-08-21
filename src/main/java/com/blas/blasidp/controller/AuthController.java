@@ -77,9 +77,10 @@ public class AuthController {
       throw new ForbiddenException(ACCOUNT_BLOCKED);
     } catch (BadCredentialsException exception) {
       AuthUser authUser = authUserDao.getAuthUserByUsername(username);
-      if (authUser != null && authUser.getCountLoginFailed() < THRESHOLD_BLOCK_ACCOUNT) {
+      if (authUser != null && (authUser.getCountLoginFailed() < THRESHOLD_BLOCK_ACCOUNT
+          || !authUser.isBlock())) {
         authUser.setCountLoginFailed(authUser.getCountLoginFailed() + 1);
-        if (authUser.getCountLoginFailed() == THRESHOLD_BLOCK_ACCOUNT) {
+        if (authUser.getCountLoginFailed() >= THRESHOLD_BLOCK_ACCOUNT) {
           authUser.setBlock(true);
         }
         authUserDao.save(authUser);
