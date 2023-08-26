@@ -15,7 +15,7 @@ import com.blas.blascommon.properties.JwtConfigurationProperties;
 import com.blas.blasidp.payload.JwtRequest;
 import com.blas.blasidp.payload.JwtResponse;
 import java.time.LocalDateTime;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,27 +28,33 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 public class AuthController {
 
   @Lazy
-  @Autowired
-  private AuthUserDao authUserDao;
+  private final AuthUserDao authUserDao;
 
   @Lazy
-  @Autowired
-  private AuthenticationManager authenticationManager;
+  private final AuthenticationManager authenticationManager;
 
   @Lazy
-  @Autowired
-  private JwtTokenUtil jwtTokenUtil;
+  private final JwtTokenUtil jwtTokenUtil;
 
-  @Autowired
-  private JwtUserDetailsService userDetailsService;
+  private final JwtUserDetailsService userDetailsService;
 
   @Lazy
-  @Autowired
-  private JwtConfigurationProperties jwtConfigurationProperties;
+  private final JwtConfigurationProperties jwtConfigurationProperties;
+
+  public AuthController(AuthUserDao authUserDao, AuthenticationManager authenticationManager,
+      JwtTokenUtil jwtTokenUtil, JwtUserDetailsService userDetailsService,
+      JwtConfigurationProperties jwtConfigurationProperties) {
+    this.authUserDao = authUserDao;
+    this.authenticationManager = authenticationManager;
+    this.jwtTokenUtil = jwtTokenUtil;
+    this.userDetailsService = userDetailsService;
+    this.jwtConfigurationProperties = jwtConfigurationProperties;
+  }
 
   @PostMapping(value = "/auth/login")
   public ResponseEntity<JwtResponse> createAuthenticationToken(
@@ -56,9 +62,12 @@ public class AuthController {
     authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
     final UserDetails userDetails = userDetailsService.loadUserByUsername(
         authenticationRequest.getUsername());
-    return ResponseEntity.ok(new JwtResponse(jwtTokenUtil.generateToken(userDetails),
-        jwtConfigurationProperties.getTimeToExpired(),
-        LocalDateTime.now().minusSeconds(-jwtConfigurationProperties.getTimeToExpired()), null,
+    long timeToExpired = jwtConfigurationProperties.getTimeToExpired();
+    log.info(
+        "Generated JWT - username: " + authenticationRequest.getUsername() + " - time to expired: "
+            + timeToExpired);
+    return ResponseEntity.ok(new JwtResponse(jwtTokenUtil.generateToken(userDetails), timeToExpired,
+        LocalDateTime.now().minusSeconds(-timeToExpired), null,
         null, "Bearer"));
   }
 

@@ -152,6 +152,7 @@ public class RegisterController {
           String.valueOf(new JSONArray(exception.getStackTrace())), isSendEmailAlert);
       throw new ServiceUnavailableException(CANNOT_CONNECT_TO_HOST);
     }
+    log.info(REGISTER_SUCCESSFULLY + " - username: " + registerBody.getUsername());
     return ResponseEntity.ok(REGISTER_SUCCESSFULLY);
   }
 
