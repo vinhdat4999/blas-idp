@@ -1,8 +1,8 @@
 package com.blas.blasidp.controller;
 
 import static com.blas.blascommon.constants.BlasConstant.BLAS;
-import static com.blas.blascommon.constants.Response.CANNOT_CONNECT_TO_HOST;
-import static com.blas.blascommon.constants.Response.HTTP_STATUS_NOT_200;
+import static com.blas.blascommon.constants.ResponseMessage.CANNOT_CONNECT_TO_HOST;
+import static com.blas.blascommon.constants.ResponseMessage.HTTP_STATUS_NOT_200;
 import static com.blas.blascommon.enums.EmailTemplate.RESEND_KEY;
 import static com.blas.blascommon.enums.FileType.JPG;
 import static com.blas.blascommon.enums.LogType.ERROR;
@@ -50,10 +50,10 @@ import java.util.Map;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
@@ -64,43 +64,28 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 public class RegisterController {
 
   private static final String TELEGRAM_AUTHEN_KEY_MSG = "Do not disclose the verification code to anyone. Your authentication code will expire in 20 minutes. Your verification: ";
-
+  @Lazy
+  private final AuthenKeyService authenKeyService;
+  @Lazy
+  private final AuthUserService authUserService;
+  @Lazy
+  private final Sha256Encoder passwordEncoder;
+  @Lazy
+  private final BlasEmailConfiguration blasEmailConfiguration;
+  @Lazy
+  private final CentralizedLogService centralizedLogService;
+  @Lazy
+  private final JwtTokenUtil jwtTokenUtil;
+  @Lazy
+  private final TelegramUtils telegramUtils;
   @Value("${blas.blas-idp.isSendEmailAlert}")
   private boolean isSendEmailAlert;
-
   @Value("${blas.service.serviceName}")
   private String serviceName;
-
-  @Lazy
-  @Autowired
-  private AuthenKeyService authenKeyService;
-
-  @Lazy
-  @Autowired
-  private AuthUserService authUserService;
-
-  @Lazy
-  @Autowired
-  private Sha256Encoder passwordEncoder;
-
-  @Lazy
-  @Autowired
-  private BlasEmailConfiguration blasEmailConfiguration;
-
-  @Lazy
-  @Autowired
-  private CentralizedLogService centralizedLogService;
-
-  @Lazy
-  @Autowired
-  private JwtTokenUtil jwtTokenUtil;
-
-  @Lazy
-  @Autowired
-  private TelegramUtils telegramUtils;
 
   @PostMapping(value = "/auth/register")
   public ResponseEntity<String> registerAccount(@RequestBody RegisterBody registerBody)

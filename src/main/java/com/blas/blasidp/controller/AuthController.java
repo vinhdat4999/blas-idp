@@ -5,7 +5,7 @@ import static com.blas.blasidp.constant.Authentication.ACCOUNT_INACTIVE;
 import static com.blas.blasidp.constant.Authentication.THRESHOLD_BLOCK_ACCOUNT;
 import static com.blas.blasidp.constant.Authentication.WRONG_CREDENTIAL;
 
-import com.blas.blascommon.core.dao.AuthUserDao;
+import com.blas.blascommon.core.dao.jpa.AuthUserDao;
 import com.blas.blascommon.core.model.AuthUser;
 import com.blas.blascommon.exceptions.types.ForbiddenException;
 import com.blas.blascommon.exceptions.types.UnauthorizedException;
@@ -15,6 +15,7 @@ import com.blas.blascommon.properties.JwtConfigurationProperties;
 import com.blas.blasidp.payload.JwtRequest;
 import com.blas.blasidp.payload.JwtResponse;
 import java.time.LocalDateTime;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 public class AuthController {
 
   @Lazy
@@ -45,16 +47,6 @@ public class AuthController {
 
   @Lazy
   private final JwtConfigurationProperties jwtConfigurationProperties;
-
-  public AuthController(AuthUserDao authUserDao, AuthenticationManager authenticationManager,
-      JwtTokenUtil jwtTokenUtil, JwtUserDetailsService userDetailsService,
-      JwtConfigurationProperties jwtConfigurationProperties) {
-    this.authUserDao = authUserDao;
-    this.authenticationManager = authenticationManager;
-    this.jwtTokenUtil = jwtTokenUtil;
-    this.userDetailsService = userDetailsService;
-    this.jwtConfigurationProperties = jwtConfigurationProperties;
-  }
 
   @PostMapping(value = "/auth/login")
   public ResponseEntity<JwtResponse> createAuthenticationToken(
