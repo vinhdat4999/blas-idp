@@ -4,6 +4,7 @@
 
 | Version | Date release | Tickets/Notes                                           |
 |---------|--------------|---------------------------------------------------------|
+| 1.24.0  | 22/09/2023   | Uptake blas-common 4.1.0                                |
 | 1.23.0  | 27/08/2023   | Refactor log and fix warning message                    |
 | 1.22.0  | 21/08/2023   | Change to user username to verify account               |
 | 1.21.0  | 31/07/2023   | Support Telegram message                                |
