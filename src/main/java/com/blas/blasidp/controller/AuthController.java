@@ -4,6 +4,7 @@ import static com.blas.blasidp.constant.Authentication.ACCOUNT_BLOCKED;
 import static com.blas.blasidp.constant.Authentication.ACCOUNT_INACTIVE;
 import static com.blas.blasidp.constant.Authentication.THRESHOLD_BLOCK_ACCOUNT;
 import static com.blas.blasidp.constant.Authentication.WRONG_CREDENTIAL;
+import static com.blas.blasidp.utils.AuthUtils.generateToken;
 
 import com.blas.blascommon.core.dao.jpa.AuthUserDao;
 import com.blas.blascommon.core.model.AuthUser;
@@ -25,6 +26,8 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -58,9 +61,17 @@ public class AuthController {
     log.info(
         "Generated JWT - username: " + authenticationRequest.getUsername() + " - time to expired: "
             + timeToExpired);
-    return ResponseEntity.ok(new JwtResponse(jwtTokenUtil.generateToken(userDetails), timeToExpired,
-        LocalDateTime.now().minusSeconds(-timeToExpired), null,
-        null, "Bearer"));
+    return ResponseEntity.ok(
+        new JwtResponse(generateToken(jwtTokenUtil, userDetails.getUsername()), timeToExpired,
+            LocalDateTime.now().minusSeconds(-timeToExpired), null,
+            null, "Bearer"));
+  }
+
+  @GetMapping(value = "/auth/token-via-oath2/{jwt}")
+  public String createAuthenticationToken(
+      @PathVariable String jwt) {
+    return String.format("JWT: %s%nTime to expired: %s seconds", jwt,
+        jwtConfigurationProperties.getTimeToExpired());
   }
 
   private void authenticate(String username, String password) {

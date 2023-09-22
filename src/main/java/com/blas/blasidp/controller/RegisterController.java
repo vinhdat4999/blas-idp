@@ -1,11 +1,11 @@
 package com.blas.blasidp.controller;
 
-import static com.blas.blascommon.constants.BlasConstant.BLAS;
 import static com.blas.blascommon.constants.ResponseMessage.CANNOT_CONNECT_TO_HOST;
 import static com.blas.blascommon.constants.ResponseMessage.HTTP_STATUS_NOT_200;
 import static com.blas.blascommon.enums.EmailTemplate.RESEND_KEY;
 import static com.blas.blascommon.enums.FileType.JPG;
 import static com.blas.blascommon.enums.LogType.ERROR;
+import static com.blas.blascommon.enums.Provider.BLAS;
 import static com.blas.blascommon.security.SecurityUtils.base64Decode;
 import static com.blas.blascommon.utils.fileutils.FileUtils.writeByteArrayToFile;
 import static com.blas.blascommon.utils.httprequest.PostRequest.sendPostRequestWithJsonArrayPayload;
@@ -92,6 +92,7 @@ public class RegisterController {
       throws IOException {
     Role roleUser = new Role();
     roleUser.setRoleId(com.blas.blascommon.enums.Role.USER.name());
+
     AuthUser authUser = new AuthUser();
     authUser.setUsername(registerBody.getUsername());
     authUser.setPassword(passwordEncoder.encode(registerBody.getPassword()));
@@ -99,7 +100,7 @@ public class RegisterController {
     authUser.setCountLoginFailed(0);
     authUser.setBlock(false);
     authUser.setActive(false);
-    authUser.setProvider(BLAS);
+    authUser.setProvider(BLAS.name());
 
     UserDetail userDetail = new UserDetail();
     userDetail.setFirstName(registerBody.getFirstName());

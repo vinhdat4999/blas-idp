@@ -1,9 +1,13 @@
 # blas-idp
+>OAuth2
+>>Login with OAuth 2.0: http://localhost:8080/login <br/>
+>>Login endpoint for Google: http://localhost:8080/oauth2/authorization/google
 
 ## Changes
 
 | Version | Date release | Tickets/Notes                                           |
 |---------|--------------|---------------------------------------------------------|
+| 2.0.0   | xx/09/2023   | Support login via Google OAuth2                         |
 | 1.24.0  | 22/09/2023   | Uptake blas-common 4.1.0                                |
 | 1.23.0  | 27/08/2023   | Refactor log and fix warning message                    |
 | 1.22.0  | 21/08/2023   | Change to user username to verify account               |
