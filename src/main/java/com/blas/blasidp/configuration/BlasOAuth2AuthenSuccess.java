@@ -1,0 +1,93 @@
+package com.blas.blasidp.configuration;
+
+import static com.blas.blascommon.enums.Provider.GOOGLE;
+import static com.blas.blascommon.utils.IdUtils.genMixID;
+import static com.blas.blasidp.constant.Authentication.REGISTER_SUCCESSFULLY;
+import static com.blas.blasidp.utils.AuthUtils.generateToken;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+
+import com.blas.blascommon.core.model.AuthUser;
+import com.blas.blascommon.core.model.Role;
+import com.blas.blascommon.core.model.UserDetail;
+import com.blas.blascommon.core.service.AuthUserService;
+import com.blas.blascommon.jwt.JwtTokenUtil;
+import com.blas.blascommon.properties.JwtConfigurationProperties;
+import com.blas.blascommon.security.hash.Sha256Encoder;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+
+@Slf4j
+@Configuration
+@RequiredArgsConstructor
+public class BlasOAuth2AuthenSuccess implements AuthenticationSuccessHandler {
+
+  private static final int LENGTH_OF_RANDOMLY_DEFAULT_PASSWORD = 30;
+  private static final String GIVEN_NAME_FIELD = "given_name";
+  private static final String FAMILY_NAME_FIELD = "family_name";
+  private static final String PICTURE_FIELD = "picture";
+
+  private final AuthUserService authUserService;
+
+  private final JwtTokenUtil jwtTokenUtil;
+
+  @Lazy
+  private final Sha256Encoder passwordEncoder;
+
+  @Lazy
+  private final JwtConfigurationProperties jwtConfigurationProperties;
+
+  @Override
+  public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+      Authentication authentication) throws IOException {
+    log.debug("BlasOAuth2AuthenSuccess invoked");
+    BlasOAuth2User oauthUser = (BlasOAuth2User) authentication.getPrincipal();
+    final String email = oauthUser.getEmail();
+    AuthUser authUser = authUserService.getAuthUserByEmail(email);
+    if (authUser == null) {
+      authUser = signUpBlasAccountViaOAuth2(oauthUser);
+      log.debug("Register new Blas account via OAuth2");
+    }
+    String username = authUser.getUsername();
+    response.sendRedirect(
+        "/auth/token-via-oath2/" + generateToken(jwtTokenUtil, username));
+    log.info(
+        "Generated JWT - username: " + username + " - time to expired: "
+            + jwtConfigurationProperties.getTimeToExpired());
+    log.debug("Login via OAuth2 successfully");
+  }
+
+  private AuthUser signUpBlasAccountViaOAuth2(BlasOAuth2User oAuth2User) {
+    Role roleUser = new Role();
+    roleUser.setRoleId(com.blas.blascommon.enums.Role.USER.name());
+
+    AuthUser authUser = new AuthUser();
+    String email = oAuth2User.getEmail();
+    authUser.setUsername(email);
+    authUser.setPassword(passwordEncoder.encode(genMixID(LENGTH_OF_RANDOMLY_DEFAULT_PASSWORD)));
+    authUser.setRole(roleUser);
+    authUser.setCountLoginFailed(0);
+    authUser.setBlock(false);
+    authUser.setActive(true);
+    authUser.setProvider(GOOGLE.name());
+
+    UserDetail userDetail = new UserDetail();
+    userDetail.setFirstName(
+        (String) oAuth2User.getAttributes().getOrDefault(GIVEN_NAME_FIELD, EMPTY));
+    userDetail.setLastName(
+        (String) oAuth2User.getAttributes().getOrDefault(FAMILY_NAME_FIELD, EMPTY));
+    userDetail.setEmail(email);
+    userDetail.setBCoin(0);
+    userDetail.setAvatarPath(
+        (String) oAuth2User.getAttributes().getOrDefault(PICTURE_FIELD, EMPTY));
+    authUserService.createUser(authUser, userDetail);
+    log.info(REGISTER_SUCCESSFULLY + " - username: " + email + " via OAuth2");
+    return authUser;
+  }
+}

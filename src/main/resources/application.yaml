@@ -11,6 +11,16 @@ spring:
       ddl-auto: none
     open-in-view: false
     show-sql: false
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            clientId: 907490346247-lg1pq3fd2j79jl6gd0o54btqnm25l203.apps.googleusercontent.com
+            clientSecret: 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
+            scope:
+              - email
+              - profile
 management:
   endpoints:
     web:

@@ -1,6 +1,7 @@
 package com.blas.blasidp.configuration;
 
 import com.blas.blascommon.security.hash.Sha256Encoder;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,7 +20,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@RequiredArgsConstructor
 public class WebSecurityConfig {
+
+  private final BlasOAuth2UserService blasOAuth2UserService;
+
+  private final BlasOAuth2AuthenSuccess blasOAuth2AuthenSuccess;
 
   @Bean
   public PasswordEncoder passwordEncoder() {
@@ -43,8 +49,11 @@ public class WebSecurityConfig {
     return http
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(authorize -> authorize
-            .requestMatchers("/auth/**").permitAll()
+            .requestMatchers("/auth/**", "/login/**", "/oauth2/**").permitAll()
             .anyRequest().authenticated())
+        .oauth2Login(oauth2 -> oauth2.userInfoEndpoint(
+                userInfoEndpoint -> userInfoEndpoint.userService(blasOAuth2UserService))
+            .successHandler(blasOAuth2AuthenSuccess))
         .headers(headers -> headers.frameOptions(FrameOptionsConfig::sameOrigin))
         .build();
   }
