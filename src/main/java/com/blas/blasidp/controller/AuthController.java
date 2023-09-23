@@ -1,10 +1,14 @@
 package com.blas.blasidp.controller;
 
+import static com.blas.blascommon.constants.SecurityConstant.SLASH_REPLACE;
+import static com.blas.blascommon.security.SecurityUtils.aesDecrypt;
+import static com.blas.blascommon.utils.StringUtils.SLASH;
 import static com.blas.blasidp.constant.Authentication.ACCOUNT_BLOCKED;
 import static com.blas.blasidp.constant.Authentication.ACCOUNT_INACTIVE;
 import static com.blas.blasidp.constant.Authentication.THRESHOLD_BLOCK_ACCOUNT;
 import static com.blas.blasidp.constant.Authentication.WRONG_CREDENTIAL;
 import static com.blas.blasidp.utils.AuthUtils.generateToken;
+import static org.apache.commons.lang3.StringUtils.replace;
 
 import com.blas.blascommon.core.dao.jpa.AuthUserDao;
 import com.blas.blascommon.core.model.AuthUser;
@@ -13,9 +17,16 @@ import com.blas.blascommon.exceptions.types.UnauthorizedException;
 import com.blas.blascommon.jwt.JwtTokenUtil;
 import com.blas.blascommon.jwt.JwtUserDetailsService;
 import com.blas.blascommon.properties.JwtConfigurationProperties;
+import com.blas.blascommon.security.KeyService;
 import com.blas.blasidp.payload.JwtRequest;
 import com.blas.blasidp.payload.JwtResponse;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
@@ -51,6 +62,9 @@ public class AuthController {
   @Lazy
   private final JwtConfigurationProperties jwtConfigurationProperties;
 
+  @Lazy
+  private final KeyService keyService;
+
   @PostMapping(value = "/auth/login")
   public ResponseEntity<JwtResponse> createAuthenticationToken(
       @RequestBody JwtRequest authenticationRequest) {
@@ -69,8 +83,11 @@ public class AuthController {
 
   @GetMapping(value = "/auth/token-via-oath2/{jwt}")
   public String createAuthenticationToken(
-      @PathVariable String jwt) {
-    return String.format("JWT: %s%nTime to expired: %s seconds", jwt,
+      @PathVariable String jwt)
+      throws InvalidAlgorithmParameterException, IllegalBlockSizeException, NoSuchPaddingException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException {
+    String decryptedToken = aesDecrypt(keyService.getBlasPrivateKey(),
+        replace(jwt, SLASH_REPLACE, SLASH));
+    return String.format("JWT: %s%nTime to expired: %s seconds", decryptedToken,
         jwtConfigurationProperties.getTimeToExpired());
   }
 
