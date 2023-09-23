@@ -27,7 +27,6 @@ spring:
             scope:
               - email
               - public_profile
-              - user_birthday
 management:
   endpoints:
     web:

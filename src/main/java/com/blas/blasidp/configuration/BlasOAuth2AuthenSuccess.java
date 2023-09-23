@@ -2,10 +2,14 @@ package com.blas.blasidp.configuration;
 
 import static com.blas.blascommon.constants.BlasConstant.FACEBOOK;
 import static com.blas.blascommon.constants.BlasConstant.GOOGLE;
+import static com.blas.blascommon.constants.SecurityConstant.SLASH_REPLACE;
+import static com.blas.blascommon.security.SecurityUtils.aesEncrypt;
 import static com.blas.blascommon.utils.IdUtils.genMixID;
+import static com.blas.blascommon.utils.StringUtils.SLASH;
 import static com.blas.blasidp.constant.Authentication.REGISTER_SUCCESSFULLY;
 import static com.blas.blasidp.utils.AuthUtils.generateToken;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.replace;
 import static org.apache.commons.lang3.StringUtils.upperCase;
 
 import com.blas.blascommon.core.model.AuthUser;
@@ -14,10 +18,17 @@ import com.blas.blascommon.core.model.UserDetail;
 import com.blas.blascommon.core.service.AuthUserService;
 import com.blas.blascommon.jwt.JwtTokenUtil;
 import com.blas.blascommon.properties.JwtConfigurationProperties;
+import com.blas.blascommon.security.KeyService;
 import com.blas.blascommon.security.hash.Sha256Encoder;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
@@ -47,6 +58,9 @@ public class BlasOAuth2AuthenSuccess implements AuthenticationSuccessHandler {
   @Lazy
   private final JwtConfigurationProperties jwtConfigurationProperties;
 
+  @Lazy
+  private final KeyService keyService;
+
   @Override
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
       Authentication authentication) throws IOException {
@@ -59,12 +73,21 @@ public class BlasOAuth2AuthenSuccess implements AuthenticationSuccessHandler {
       log.debug("Register new Blas account via OAuth2");
     }
     String username = authUser.getUsername();
-    response.sendRedirect(
-        "/auth/token-via-oath2/" + generateToken(jwtTokenUtil, username));
     log.info(
         "Generated JWT - username: " + username + " - time to expired: "
             + jwtConfigurationProperties.getTimeToExpired());
     log.debug("Login via OAuth2 successfully");
+    String aedEncryptedToken = null;
+    try {
+      aedEncryptedToken = aesEncrypt(keyService.getBlasPrivateKey(),
+          generateToken(jwtTokenUtil, username));
+    } catch (IllegalBlockSizeException | NoSuchPaddingException | BadPaddingException |
+             InvalidAlgorithmParameterException | InvalidKeyException |
+             NoSuchAlgorithmException exception) {
+      log.error(exception.toString());
+    }
+    response.sendRedirect(
+        "/auth/token-via-oath2/" + replace(aedEncryptedToken, SLASH, SLASH_REPLACE));
   }
 
   private AuthUser signUpBlasAccountViaOAuth2(BlasOAuth2User oAuth2User,
