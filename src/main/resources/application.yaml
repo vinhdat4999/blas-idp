@@ -21,6 +21,13 @@ spring:
             scope:
               - email
               - profile
+          facebook:
+            clientId: 1483809445791923
+            clientSecret: cf95985be987f1ac3459bb4710e32fec
+            scope:
+              - email
+              - public_profile
+              - user_birthday
 management:
   endpoints:
     web:
