@@ -87,13 +87,15 @@ public class AuthController {
   }
 
   @GetMapping(value = "/auth/token-via-oath2/{jwt}")
-  public String createAuthenticationToken(
-      @PathVariable String jwt)
+  public ResponseEntity<JwtResponse> createAuthenticationToken(
+      @PathVariable("jwt") String jwt)
       throws InvalidAlgorithmParameterException, IllegalBlockSizeException, NoSuchPaddingException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException {
     String decryptedToken = aesDecrypt(keyService.getBlasPrivateKey(),
         replace(jwt, SLASH_REPLACE, SLASH));
-    return String.format("JWT: %s%nTime to expired: %s seconds", decryptedToken,
-        jwtConfigurationProperties.getTimeToExpired());
+    long timeToExpired = jwtConfigurationProperties.getTimeToExpired();
+    return ResponseEntity.ok(
+        new JwtResponse(decryptedToken, timeToExpired,
+            LocalDateTime.now().minusSeconds(-timeToExpired), null, null, "Bearer"));
   }
 
   private void authenticate(String username, String password) {
