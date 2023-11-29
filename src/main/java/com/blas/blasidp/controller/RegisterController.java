@@ -131,7 +131,10 @@ public class RegisterController {
       if (response.getStatusCode() != HttpStatus.OK.value()) {
         throw new BadRequestException(HTTP_STATUS_NOT_200);
       }
-    } catch (IOException | BadRequestException exception) {
+    } catch (IOException | BadRequestException | InvalidAlgorithmParameterException |
+             UnrecoverableKeyException | IllegalBlockSizeException | NoSuchPaddingException |
+             CertificateException | KeyStoreException | NoSuchAlgorithmException |
+             BadPaddingException | InvalidKeyException exception) {
       centralizedLogService.saveLog(serviceName, ERROR, exception.toString(),
           exception.getCause() == null ? EMPTY : exception.getCause().toString(),
           new JSONArray(List.of(htmlEmailRequest)).toString(), null, null,
@@ -172,7 +175,11 @@ public class RegisterController {
       if (response.getStatusCode() != HttpStatus.OK.value()) {
         throw new BadRequestException(HTTP_STATUS_NOT_200);
       }
-    } catch (IOException | JSONException | BadRequestException e) {
+    } catch (IOException | JSONException | BadRequestException |
+             InvalidAlgorithmParameterException | UnrecoverableKeyException |
+             IllegalBlockSizeException | NoSuchPaddingException | CertificateException |
+             KeyStoreException | NoSuchAlgorithmException | BadPaddingException |
+             InvalidKeyException e) {
       centralizedLogService.saveLog(serviceName, ERROR, e.toString(),
           e.getCause() == null ? EMPTY : e.getCause().toString(),
           new JSONArray(List.of(htmlEmailRequest)).toString(), null, null,
