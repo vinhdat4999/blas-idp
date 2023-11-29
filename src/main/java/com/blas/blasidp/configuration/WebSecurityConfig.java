@@ -12,7 +12,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -27,10 +26,7 @@ public class WebSecurityConfig {
 
   private final BlasOAuth2AuthenSuccess blasOAuth2AuthenSuccess;
 
-  @Bean
-  public PasswordEncoder passwordEncoder() {
-    return new Sha256Encoder();
-  }
+  private final Sha256Encoder sha256Encoder;
 
   @Bean
   public AuthenticationManager authenticationManager(HttpSecurity http,
@@ -40,7 +36,7 @@ public class WebSecurityConfig {
     authenticationManagerBuilder
         .parentAuthenticationManager(null)
         .userDetailsService(jwtUserDetailsService)
-        .passwordEncoder(passwordEncoder());
+        .passwordEncoder(sha256Encoder);
     return authenticationManagerBuilder.build();
   }
 

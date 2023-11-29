@@ -20,9 +20,13 @@ import com.blas.blascommon.properties.JwtConfigurationProperties;
 import com.blas.blascommon.security.KeyService;
 import com.blas.blasidp.payload.JwtRequest;
 import com.blas.blasidp.payload.JwtResponse;
+import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.time.LocalDateTime;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -67,7 +71,8 @@ public class AuthController {
 
   @PostMapping(value = "/auth/login")
   public ResponseEntity<JwtResponse> createAuthenticationToken(
-      @RequestBody JwtRequest authenticationRequest) {
+      @RequestBody JwtRequest authenticationRequest)
+      throws InvalidAlgorithmParameterException, UnrecoverableKeyException, IllegalBlockSizeException, NoSuchPaddingException, CertificateException, KeyStoreException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
     authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
     final UserDetails userDetails = userDetailsService.loadUserByUsername(
         authenticationRequest.getUsername());

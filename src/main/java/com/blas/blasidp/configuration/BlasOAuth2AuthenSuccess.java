@@ -25,7 +25,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
@@ -82,8 +85,8 @@ public class BlasOAuth2AuthenSuccess implements AuthenticationSuccessHandler {
       aedEncryptedToken = aesEncrypt(keyService.getBlasPrivateKey(),
           generateToken(jwtTokenUtil, username));
     } catch (IllegalBlockSizeException | NoSuchPaddingException | BadPaddingException |
-             InvalidAlgorithmParameterException | InvalidKeyException |
-             NoSuchAlgorithmException exception) {
+             InvalidAlgorithmParameterException | InvalidKeyException | NoSuchAlgorithmException |
+             UnrecoverableKeyException | CertificateException | KeyStoreException exception) {
       log.error(exception.toString());
     }
     response.sendRedirect(
