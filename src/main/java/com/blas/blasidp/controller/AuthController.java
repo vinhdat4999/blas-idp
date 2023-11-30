@@ -108,9 +108,9 @@ public class AuthController {
         authUserDao.save(authUser);
       }
     } catch (DisabledException exception) {
-      throw new UnauthorizedException(ACCOUNT_INACTIVE);
+      throw new UnauthorizedException(ACCOUNT_INACTIVE, exception);
     } catch (LockedException exception) {
-      throw new ForbiddenException(ACCOUNT_BLOCKED);
+      throw new ForbiddenException(ACCOUNT_BLOCKED, exception);
     } catch (BadCredentialsException exception) {
       AuthUser authUser = authUserDao.getAuthUserByUsername(username);
       if (authUser != null && (authUser.getCountLoginFailed() < THRESHOLD_BLOCK_ACCOUNT
@@ -121,7 +121,7 @@ public class AuthController {
         }
         authUserDao.save(authUser);
       }
-      throw new UnauthorizedException(WRONG_CREDENTIAL);
+      throw new UnauthorizedException(WRONG_CREDENTIAL, exception);
     }
   }
 }
