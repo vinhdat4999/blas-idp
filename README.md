@@ -9,7 +9,7 @@
 
 | Version | Date release | Tickets/Notes                                           |
 |---------|--------------|---------------------------------------------------------|
-| 2.1.0   | 30/11/2023   | Upgrade spring boot 3.2.0                               |
+| 2.1.0   | 01/12/2023   | Upgrade spring boot 3.2.0                               |
 | 2.0.0   | 23/09/2023   | Support OAuth2                                          |
 | 1.24.0  | 22/09/2023   | Uptake blas-common 4.1.0                                |
 | 1.23.0  | 27/08/2023   | Refactor log and fix warning message                    |
