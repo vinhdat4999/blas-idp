@@ -20,12 +20,9 @@ import com.blas.blascommon.core.model.Role;
 import com.blas.blascommon.core.model.UserDetail;
 import com.blas.blascommon.core.service.AuthUserService;
 import com.blas.blascommon.core.service.AuthenKeyService;
-import com.blas.blascommon.core.service.CentralizedLogService;
 import com.blas.blascommon.exceptions.types.BadRequestException;
 import com.blas.blascommon.exceptions.types.ForbiddenException;
-import com.blas.blascommon.jwt.JwtTokenUtil;
 import com.blas.blascommon.payload.HtmlEmailRequest;
-import com.blas.blascommon.properties.BlasEmailConfiguration;
 import com.blas.blascommon.security.hash.Sha256Encoder;
 import com.blas.blascommon.utils.TelegramUtils;
 import com.blas.blasidp.configuration.EmailQueueService;
@@ -47,7 +44,6 @@ import javax.crypto.NoSuchPaddingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -67,19 +63,9 @@ public class RegisterController {
   @Lazy
   private final Sha256Encoder passwordEncoder;
   @Lazy
-  private final BlasEmailConfiguration blasEmailConfiguration;
-  @Lazy
-  private final CentralizedLogService centralizedLogService;
-  @Lazy
-  private final JwtTokenUtil jwtTokenUtil;
-  @Lazy
   private final TelegramUtils telegramUtils;
   @Lazy
   private final EmailQueueService emailQueueService;
-  @Value("${blas.blas-idp.isSendEmailAlert}")
-  private boolean isSendEmailAlert;
-  @Value("${blas.service.serviceName}")
-  private String serviceName;
 
   @PostMapping(value = "/auth/register")
   public ResponseEntity<String> registerAccount(@RequestBody RegisterBody registerBody)
@@ -110,8 +96,6 @@ public class RegisterController {
       userDetail.setAvatarPath(avatarPath);
     }
     authUserService.createUser(authUser, userDetail);
-
-    String host = blasEmailConfiguration.getEndpointHtmlEmail();
 
     HtmlEmailRequest htmlEmailRequest = new HtmlEmailRequest();
     htmlEmailRequest.setEmailTo(userDetail.getEmail());

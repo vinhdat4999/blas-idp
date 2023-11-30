@@ -48,9 +48,6 @@ blas:
     jwt:
       timeToExpired: 8640000 #100 days
       timeToExpiredInternalToken: 120 #2 minutes
-  blas-email:
-    endpointHtmlEmail: http://localhost:8082/send-email/html
-    endpointHtmlEmailWithAttachments: http://localhost:8082/send-email/html-with-attachment
 
 #logging:
 #  file:
