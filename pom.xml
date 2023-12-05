@@ -60,4 +60,11 @@
       </releases>
     </repository>
   </repositories>
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <name>GitHub Apache Maven Packages</name>
+      <url>https://maven.pkg.github.com/vinhdat4999/blas-idp</url>
+    </repository>
+  </distributionManagement>
 </project>
