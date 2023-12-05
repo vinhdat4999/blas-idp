@@ -67,4 +67,19 @@
       <url>https://maven.pkg.github.com/vinhdat4999/blas-idp</url>
     </repository>
   </distributionManagement>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>
