@@ -1,13 +1,4 @@
-# Stage 1: Maven build
-FROM maven:3.8.4-openjdk-17-slim AS build
+FROM eclipse-temurin:17-jdk
 WORKDIR /app
-COPY pom.xml .
-COPY src ./src
-RUN mvn -f pom.xml clean package
-
-# Stage 2: Run with Temurin OpenJDK 17
-FROM eclipse-temurin:17-jre-focal
-WORKDIR /app
-COPY --from=build /app/target/*.jar app.jar
-EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+COPY target/*.jar /app/
+CMD java -jar $(find /app -name '*.jar' | head -n 1)
