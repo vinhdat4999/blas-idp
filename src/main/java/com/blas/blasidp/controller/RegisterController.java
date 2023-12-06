@@ -13,8 +13,9 @@ import static com.blas.blasidp.constant.Authentication.SUBJECT_EMAIL_AUTHEN_CODE
 import static com.blas.blasidp.constant.Authentication.VERIFY_FAILED;
 import static com.blas.blasidp.constant.Authentication.VERIFY_SUCCESSFULLY;
 import static java.time.LocalDateTime.now;
-import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
+import com.blas.blascommon.configurations.EmailQueueService;
 import com.blas.blascommon.core.model.AuthUser;
 import com.blas.blascommon.core.model.Role;
 import com.blas.blascommon.core.model.UserDetail;
@@ -25,7 +26,6 @@ import com.blas.blascommon.exceptions.types.ForbiddenException;
 import com.blas.blascommon.payload.HtmlEmailRequest;
 import com.blas.blascommon.security.hash.Sha256Encoder;
 import com.blas.blascommon.utils.TelegramUtils;
-import com.blas.blasidp.configuration.EmailQueueService;
 import com.blas.blasidp.payload.RegisterBody;
 import com.blas.blasidp.payload.VerifyAccountBody;
 import java.io.IOException;
@@ -90,7 +90,7 @@ public class RegisterController {
     userDetail.setGender(registerBody.isGender());
     userDetail.setBirthday(registerBody.getBirthday());
     userDetail.setBCoin(0);
-    if (!isBlank(registerBody.getAvatarBase64())) {
+    if (isNotBlank(registerBody.getAvatarBase64())) {
       String avatarPath = "avatar/" + authUser.getUsername() + "." + JPG.getPostfix();
       writeByteArrayToFile(base64Decode(registerBody.getAvatarBase64()), avatarPath);
       userDetail.setAvatarPath(avatarPath);
