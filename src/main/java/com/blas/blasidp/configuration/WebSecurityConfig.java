@@ -4,6 +4,7 @@ import com.blas.blascommon.security.hash.Sha256Encoder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -16,6 +17,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+@EnableAsync
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -45,7 +47,7 @@ public class WebSecurityConfig {
     return http
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(authorize -> authorize
-            .requestMatchers("/auth/**", "/login/**", "/oauth2/**", "/actuator/**").permitAll()
+            .requestMatchers("/auth/**", "/login/**", "/oauth2/**", "/actuator/**", "/hello").permitAll()
             .anyRequest().authenticated())
         .oauth2Login(oauth2 -> oauth2.userInfoEndpoint(
                 userInfoEndpoint -> userInfoEndpoint.userService(blasOAuth2UserService))

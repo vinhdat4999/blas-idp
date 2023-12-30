@@ -9,6 +9,7 @@
 
 | Version | Date release | Tickets/Notes                                           |
 |---------|--------------|---------------------------------------------------------|
+| 2.4.0   | 31/12/2023   | Uptake blas-common 4.8.0 and add Helm                   |
 | 2.3.0   | 08/12/2023   | Support Micrometer Prometheus metrics                   |
 | 2.2.0   | 06/12/2023   | Support Github Packages Maven Repository                |
 | 2.1.0   | 01/12/2023   | Upgrade spring boot 3.2.0                               |
