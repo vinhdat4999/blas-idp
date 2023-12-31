@@ -9,6 +9,7 @@
 
 | Version | Date release | Tickets/Notes                                           |
 |---------|--------------|---------------------------------------------------------|
+| 2.5.0   | 01/01/2024   | Add time zone configuration and PDF password            |
 | 2.4.0   | 31/12/2023   | Uptake blas-common 4.8.0 and add Helm                   |
 | 2.3.0   | 08/12/2023   | Support Micrometer Prometheus metrics                   |
 | 2.2.0   | 06/12/2023   | Support Github Packages Maven Repository                |
