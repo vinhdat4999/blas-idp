@@ -29,6 +29,7 @@ import com.blas.blascommon.utils.TelegramUtils;
 import com.blas.blasidp.payload.RegisterBody;
 import com.blas.blasidp.payload.VerifyAccountBody;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -122,7 +123,8 @@ public class RegisterController {
     } catch (URISyntaxException | InvalidAlgorithmParameterException | UnrecoverableKeyException |
              IllegalBlockSizeException | NoSuchPaddingException | CertificateException |
              KeyStoreException | NoSuchAlgorithmException | BadPaddingException |
-             InvalidKeyException | IOException exception) {
+             InvalidKeyException | IOException | InvocationTargetException | NoSuchMethodException |
+             InstantiationException | IllegalAccessException exception) {
       log.error(exception.toString());
     }
 
