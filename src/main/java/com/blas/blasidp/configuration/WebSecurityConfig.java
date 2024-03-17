@@ -47,7 +47,8 @@ public class WebSecurityConfig {
     return http
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(authorize -> authorize
-            .requestMatchers("/auth/**", "/login/**", "/oauth2/**", "/actuator/**", "/hello").permitAll()
+            .requestMatchers("/auth/**", "/login/**", "/oauth2/**", "/actuator/**", "/hello")
+            .permitAll()
             .anyRequest().authenticated())
         .oauth2Login(oauth2 -> oauth2.userInfoEndpoint(
                 userInfoEndpoint -> userInfoEndpoint.userService(blasOAuth2UserService))
