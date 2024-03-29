@@ -81,12 +81,15 @@ autoscaling:
 
 # Additional volumes on the output Deployment definition.
 volumes:
-  - name: config-volume
-    configMap:
-      name: server-config
+#  - name: config-volume
+#    configMap:
+#      name: server-config
 
 # Additional volumeMounts on the output Deployment definition.
-volumeMounts: [ ]
+
+volumeMounts:
+#  - name: config-volume
+#    mountPath: /app/config
 
 nodeSelector: { }
 

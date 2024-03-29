@@ -9,7 +9,7 @@ data:
     spring:
       datasource:
         driver-class-name: com.mysql.cj.jdbc.Driver
-        url: jdbc:mysql://blasdatabase.mysql.database.azure.com/blas
+        url: jdbc:mysql://blas.mysql.database.azure.com/blas
         username: blas
         password: 0546550566Qq@#
       data:
