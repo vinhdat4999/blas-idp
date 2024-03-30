@@ -75,19 +75,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up Helm
-        uses: azure/setup-helm@v1
-        with:
-          version: 'v3.7.0'
-
-      - name: Package Helm Chart
-        run: helm package ./charts/blas-idp
-
-      - name: Publish to Artifact Hub
+      - name: Install artifact-hub-push
         run: |
-          curl -X POST -F "chart=@blas-idp-2.8.0.tgz" -H "Authorization: ${{ secrets.ARTIFACT_HUB_TOKEN }}" https://artifacthub.io/api/packages/blas-idp/versions
+          curl -L https://github.com/artifacthub/hub/releases/download/v1.17.0/ah_1.17.0_linux_amd64.tar.gz | tar zx
+          sudo mv artifact-hub-push /usr/local/bin/
+        shell: bash
+
+      - name: Push to Artifact Hub
+        run: |
+          artifact-hub-push --repository blas-idp --chart ./blas-idp-*.tgz --api-key ${{ secrets.ARTIFACT_HUB_TOKEN }}
         env:
-          ARTIFACT_HUB_API_KEY: ${{ secrets.ARTIFACT_HUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 #  deploy:
 #    runs-on: ubuntu-latest
