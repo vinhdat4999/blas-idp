@@ -83,10 +83,16 @@ jobs:
           helm repo index --url "https://github.com/${{ github.repository }}/releases/latest/download" --merge ./index.yaml .
 
       - name: Publish Helm chart to GitHub Packages
-        uses: actions/upload-artifact@v2
-        with:
-          name: helm-chart
-          path: ./blas-idp-*.tgz
+        run: |
+          helm push ./blas-idp-*.tgz ghcr.io/vinhdat4999/blas-idp
+        env:
+          USERNAME: ${{ github.actor }}
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#      - name: Publish Helm chart to GitHub Packages
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: helm-chart
+#          path: ./blas-idp-*.tgz
 
 #  deploy:
 #    runs-on: ubuntu-latest
