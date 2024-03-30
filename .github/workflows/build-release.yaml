@@ -28,13 +28,6 @@ jobs:
           sudo apt-get update
           sudo apt-get install libxml2-utils
 
-      - name: Extract service name pom.xml
-        id: extractName
-        run: |
-          serviceName=$(xmllint --xpath '/*[local-name()="project"]/*[local-name()="artifactId"]/text()' pom.xml)
-          echo "serviceName=$serviceName"
-          echo "serviceName=$serviceName" >> $GITHUB_OUTPUT
-
       - name: Extract release version from pom.xml
         id: extractVersion
         run: |
@@ -55,12 +48,6 @@ jobs:
           GITHUB_ACTOR: ${{ env.GITHUB_ACTOR }}
           GITHUB_TOKEN: ${{ secrets.PACKAGE }}
 
-#      - name: Publish to GitHub Packages Apache Maven
-#        run: mvn deploy
-#        env:
-#          GITHUB_ACTOR: ${{ env.GITHUB_ACTOR }}
-#          GITHUB_TOKEN: ${{ secrets.PACKAGE }}
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
@@ -80,3 +67,48 @@ jobs:
 
       - name: Logout from Docker Hub
         run: docker logout
+
+  build-helm:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v1
+
+      - name: Package Helm chart
+        run: |
+          helm package ./chart/blas-idp
+          helm repo index --url "https://github.com/${{ github.repository }}/releases/latest/download" --merge ./index.yaml .
+
+      - name: Publish Helm chart to GitHub Packages
+        uses: actions/upload-artifact@v2
+        with:
+          name: helm-chart
+          path: ./chart/blas-idp-*.tgz
+
+#  deploy:
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v2
+#
+#      - name: Setup Helm
+#        uses: azure/setup-helm@v1
+#
+#      - name: Login to Azure
+#        uses: azure/login@v1
+#        with:
+#          creds: ${{ secrets.AZURE_CREDENTIALS }}
+#
+#      - name: Set AKS context
+#        uses: azure/aks-set-context@v1
+#        with:
+#          creds: ${{ secrets.AZURE_CREDENTIALS }}
+#          cluster-name: blas-aks
+#          resource-group: <resource-group-name>
+#
+#      - name: Deploy Helm chart to AKS
+#        run: helm upgrade --install my-release ./path/to/your/helm/chart
