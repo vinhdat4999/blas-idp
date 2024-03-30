@@ -70,29 +70,29 @@ jobs:
 
   build-helm:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Setup Helm
-        uses: azure/setup-helm@v1
+      - name: Install Helm
+        run: |
+          curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+
+      - name: Install Artifact Hub CLI
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/artifacthub/hub/main/install/install.sh | bash
+          export PATH=$PATH:/home/runner/.artifact-hub/bin
 
       - name: Package Helm chart
-        run: |
-          helm package ./charts/blas-idp
-          helm repo index --url "https://github.com/${{ github.repository }}/releases/latest/download" --merge ./index.yaml .
+        run: helm package ./charts/blas-idp -d .
 
-      - name: Publish Helm chart to GitHub Packages
+      - name: Publish Helm chart to Artifact Hub
         run: |
-          helm push ./blas-idp-*.tgz ghcr.io/vinhdat4999/blas-idp
+          helm artifact push ./blas-idp-*.tgz
         env:
-          USERNAME: ${{ github.actor }}
-          TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#      - name: Publish Helm chart to GitHub Packages
-#        uses: actions/upload-artifact@v2
-#        with:
-#          name: helm-chart
-#          path: ./blas-idp-*.tgz
+          HELM_EXPERIMENTAL_OCI: 1
+          ARTIFACT_HUB_TOKEN: ${{ secrets.ARTIFACT_HUB_TOKEN }}
 
 #  deploy:
 #    runs-on: ubuntu-latest
