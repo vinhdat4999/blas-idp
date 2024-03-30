@@ -89,9 +89,8 @@ jobs:
 
       - name: Publish Helm chart to Artifact Hub
         run: |
-          helm artifact push ./blas-idp-*.tgz
+          artifact-hub push -o OWNER -r REPOSITORY -p ./path/to/your/helm/chart-*.tgz --token $ARTIFACT_HUB_TOKEN
         env:
-          HELM_EXPERIMENTAL_OCI: 1
           ARTIFACT_HUB_TOKEN: ${{ secrets.ARTIFACT_HUB_TOKEN }}
 
 #  deploy:
