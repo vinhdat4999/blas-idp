@@ -79,14 +79,14 @@ jobs:
 
       - name: Package Helm chart
         run: |
-          helm package ./chart/blas-idp
+          helm package ./charts/blas-idp
           helm repo index --url "https://github.com/${{ github.repository }}/releases/latest/download" --merge ./index.yaml .
 
       - name: Publish Helm chart to GitHub Packages
         uses: actions/upload-artifact@v2
         with:
           name: helm-chart
-          path: ./chart/blas-idp-*.tgz
+          path: ./charts/blas-idp-*.tgz
 
 #  deploy:
 #    runs-on: ubuntu-latest
