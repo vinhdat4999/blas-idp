@@ -3,13 +3,12 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://blas.mysql.database.azure.com/blas
-    username: blas
-    password: 0546550566Qq@#
+    url: jdbc:mysql://localhost:3306/blas
+    username: root
+    password: 123456
   data:
     mongodb:
       uri: mongodb+srv://vinhdat4999:hpDOksLujqSukEbt@blas.ofn7pbk.mongodb.net/blas
-#      uri: mongodb://blascosmosdbaccount:ADdbvLp3v9uZVOLOJQ9KHOy35433WLkFqCWtjOeXog77gXOIjSoFRR68H1lQZtDCBNRQGiX01YiRACDboFNthg==@blascosmosdbaccount.mongo.cosmos.azure.com:10255/blas?ssl=true&replicaSet=globaldb&retrywrites=false&maxIdleTimeMS=120000&appName=@blascosmosdbaccount@
   jpa:
     hibernate:
       ddl-auto: none

@@ -28,6 +28,13 @@ jobs:
           sudo apt-get update
           sudo apt-get install libxml2-utils
 
+      - name: Extract service name pom.xml
+        id: extractName
+        run: |
+          serviceName=$(xmllint --xpath '/*[local-name()="project"]/*[local-name()="artifactId"]/text()' pom.xml)
+          echo "serviceName=$serviceName"
+          echo "serviceName=$serviceName" >> $GITHUB_OUTPUT
+
       - name: Extract release version from pom.xml
         id: extractVersion
         run: |
