@@ -85,7 +85,7 @@ jobs:
 
       - name: Publish to Artifact Hub
         run: |
-          curl -X POST -F "chart=@blas-idp-*.tgz" -H "Authorization: ${ARTIFACT_HUB_API_KEY}" https://artifacthub.io/api/packages/blas-idp/versions
+          curl -X POST -F "chart=@blas-idp-2.8.0.tgz" -H "Authorization: ${ARTIFACT_HUB_API_KEY}" https://artifacthub.io/api/packages/blas-idp/versions
         env:
           ARTIFACT_HUB_API_KEY: ${{ secrets.ARTIFACT_HUB_API_KEY }}
 
