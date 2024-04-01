@@ -42,22 +42,22 @@ spec:
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /
+              path: /actuator/health/liveness
               port: http
           readinessProbe:
             httpGet:
-              path: /
+              path: /actuator/health/readiness
               port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          {{- with .Values.volumeMounts }}
           volumeMounts:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-      {{- with .Values.volumes }}
+            - name: {{.Chart.Name}}-config-volume
+              mountPath: /app/config
+              readOnly: true
       volumes:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+        - name: {{.Chart.Name}}-config-volume
+          configMap:
+            name: {{.Chart.Name}}-service-config
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

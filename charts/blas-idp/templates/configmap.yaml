@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: server-config
+  name: {{.Chart.Name}}-service-config
 data:
   application.yaml: |
     server:
@@ -57,10 +57,22 @@ data:
         enableLogRequest: true
         enableLogLocalRequest: false
       blas-service-support:
-        throughServiceSupport: false
-        endpointCheckMaintenance: http://localhost:8084/maintenance/check
+        throughServiceSupport: true
+        endpointCheckMaintenance: http://blas-service-support.dev.svc.cluster.local/maintenance/check
       blas-idp:
         isSendEmailAlert: true
         jwt:
           timeToExpired: 8640000 #100 days
           timeToExpiredInternalToken: 120 #2 minutes
+
+    logging:
+      level:
+{{- range $key, $value := index .Values "service-config" "logging" "level" }}
+        {{$key}}: {{$value}}
+{{- end }}
+
+{{/*  hazelcast-client.yaml: |-*/}}
+{{/*    hazelcast-client:*/}}
+{{/*      network:*/}}
+{{/*        kubernetes:*/}}
+{{/*          enabled: {{ index .Values "service-config" "hazelcast-client" "network" "kubernetes" "enabled" }}*/}}
