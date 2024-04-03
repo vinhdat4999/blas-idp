@@ -11,7 +11,7 @@ fullnameOverride: "blas-idp"
 
 serviceAccount:
   # Specifies whether a service account should be created
-  create: false
+  create: true
   automount: true
   # Annotations to add to the service account
   annotations: { }
@@ -99,7 +99,7 @@ service-config:
       org.hibernate: WARN
       com.azure: WARN
       io.micrometer: WARN
-      com.hazelcast: INFO
+      com.hazelcast: DEBUG
       org.mongodb: WARN
       org.springframework: INFO
       org.apache.http: WARN

@@ -57,14 +57,19 @@ import org.springframework.web.bind.annotation.RestController;
 public class RegisterController {
 
   private static final String TELEGRAM_AUTHEN_KEY_MSG = "Do not disclose the verification code to anyone. Your authentication code will expire in 20 minutes. Your verification: ";
+
   @Lazy
   private final AuthenKeyService authenKeyService;
+
   @Lazy
   private final AuthUserService authUserService;
+
   @Lazy
   private final Sha256Encoder passwordEncoder;
+
   @Lazy
   private final TelegramUtils telegramUtils;
+
   @Lazy
   private final EmailQueueService emailQueueService;
 

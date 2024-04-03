@@ -71,8 +71,8 @@ data:
         {{$key}}: {{$value}}
 {{- end }}
 
-{{/*  hazelcast-client.yaml: |-*/}}
-{{/*    hazelcast-client:*/}}
-{{/*      network:*/}}
-{{/*        kubernetes:*/}}
-{{/*          enabled: {{ index .Values "service-config" "hazelcast-client" "network" "kubernetes" "enabled" }}*/}}
+  hazelcast-client.yaml: |-
+    hazelcast-client:
+      network:
+        kubernetes:
+          enabled: {{ index .Values "service-config" "hazelcast-client" "network" "kubernetes" "enabled" }}
