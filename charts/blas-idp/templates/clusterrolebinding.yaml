@@ -8,5 +8,5 @@ roleRef:
   name: hazelcast-cluster-role
 subjects:
   - kind: ServiceAccount
-    name: {{ include "blas-idp.serviceAccountName" . }}
+    name: blas
     namespace: dev
