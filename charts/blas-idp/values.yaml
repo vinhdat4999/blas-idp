@@ -26,7 +26,7 @@ podSecurityContext: { }
 # fsGroup: 2000
 
 securityContext: { }
-  # capabilities:
+# capabilities:
 #   drop:
 #   - ALL
 # readOnlyRootFilesystem: true
@@ -57,17 +57,17 @@ ingress:
 startupProbe:
   failureThreshold: 40
   periodSeconds: 5
-  initialDelaySeconds: 0
+  initialDelaySeconds: 30
 livenessProbe:
   failureThreshold: 3
   periodSeconds: 20
   timeoutSeconds: 5
-  initialDelaySeconds: 5
+  initialDelaySeconds: 30
 readinessProbe:
   failureThreshold: 3
   periodSeconds: 20
   timeoutSeconds: 5
-  initialDelaySeconds: 5
+  initialDelaySeconds: 30
 
 resources:
   limits:
@@ -99,9 +99,10 @@ service-config:
       org.hibernate: WARN
       com.azure: WARN
       io.micrometer: WARN
-      com.hazelcast: DEBUG
+      com.hazelcast: WARN
       org.mongodb: WARN
-      org.springframework: INFO
+      com.zaxxer: WARN
+      org.springframework: WARN
       org.apache.http: WARN
 
   hazelcast-client:
