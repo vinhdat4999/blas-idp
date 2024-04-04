@@ -64,6 +64,9 @@ data:
         jwt:
           timeToExpired: 8640000 #100 days
           timeToExpiredInternalToken: 120 #2 minutes
+      hazelcast:
+        aksNamespace: {{.Values.aksNamespace}}
+        hazelcastService: {{.Values.hazelcastService}}
 
     logging:
       level:

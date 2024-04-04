@@ -9,6 +9,9 @@ imagePullSecrets: [ ]
 nameOverride: ""
 fullnameOverride: "blas-idp"
 
+aksNamespace: dev
+hazelcastService: hazelcast
+
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
@@ -75,7 +78,7 @@ resources:
     memory: 600Mi
   requests:
     cpu: 800m
-  memory: 600Mi
+    memory: 600Mi
 
 autoscaling:
   enabled: false
@@ -85,7 +88,7 @@ autoscaling:
   targetMemoryUtilizationPercentage: 80
 
 nodeSelector:
-  "beta.kubernetes.io/os": linux
+  "kubernetes.io/os": linux
 
 tolerations: [ ]
 

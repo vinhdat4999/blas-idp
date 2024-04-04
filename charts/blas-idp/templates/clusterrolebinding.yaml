@@ -8,5 +8,5 @@ roleRef:
   name: hazelcast-cluster-role
 subjects:
   - kind: ServiceAccount
-    name: blas
-    namespace: dev
+    name: blas-service-account
+    namespace: {{ .Values.aksNamespace }}

@@ -22,12 +22,13 @@ spec:
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
+        hazelcast: {{.Values.hazelcastService}}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: blas
+      serviceAccountName: blas-service-account
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -42,7 +43,6 @@ spec:
               protocol: TCP
             - name: hazelcast
               containerPort: 5701
-              protocol: TCP
           startupProbe:
             httpGet:
               path: /actuator/health/readiness
