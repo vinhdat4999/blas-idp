@@ -75,7 +75,7 @@ resources:
     memory: 600Mi
   requests:
     cpu: 800m
-  memory: 600Mi
+    memory: 600Mi
 
 autoscaling:
   enabled: false
@@ -85,7 +85,7 @@ autoscaling:
   targetMemoryUtilizationPercentage: 80
 
 nodeSelector:
-  "beta.kubernetes.io/os": linux
+  "kubernetes.io/os": linux
 
 tolerations: [ ]
 
@@ -99,7 +99,7 @@ service-config:
       org.hibernate: WARN
       com.azure: WARN
       io.micrometer: WARN
-      com.hazelcast: WARN
+      com.hazelcast: DEBUG
       org.mongodb: WARN
       com.zaxxer: WARN
       org.springframework: WARN

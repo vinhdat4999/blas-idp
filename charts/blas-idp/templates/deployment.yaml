@@ -27,7 +27,7 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: blas
+      serviceAccountName: blas-service-account
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -39,9 +39,6 @@ spec:
           ports:
             - name: http
               containerPort: {{ .Values.service.targetPort }}
-              protocol: TCP
-            - name: hazelcast
-              containerPort: 5701
               protocol: TCP
           startupProbe:
             httpGet:
