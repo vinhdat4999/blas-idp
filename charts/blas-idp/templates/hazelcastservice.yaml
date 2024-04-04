@@ -10,4 +10,4 @@ spec:
     - port: 5701
       protocol: TCP
   selector:
-    hazelcast: blas-hazelcast
+    hazelcast: {{.Values.hazelcastService}}

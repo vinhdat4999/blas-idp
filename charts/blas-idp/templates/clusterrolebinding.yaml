@@ -9,4 +9,4 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: blas-service-account
-    namespace: dev
+    namespace: {{ .Values.aksNamespace }}

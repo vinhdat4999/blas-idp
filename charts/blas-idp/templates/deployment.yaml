@@ -4,7 +4,6 @@ metadata:
   name: {{ include "blas-idp.fullname" . }}
   labels:
     {{- include "blas-idp.labels" . | nindent 4 }}
-    hazelcast: blas-hazelcast
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
@@ -23,7 +22,7 @@ spec:
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
-        hazelcast: blas-hazelcast
+        hazelcast: {{.Values.hazelcastService}}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -42,7 +41,7 @@ spec:
             - name: http
               containerPort: {{ .Values.service.targetPort }}
               protocol: TCP
-            - name: multicast
+            - name: hazelcast
               containerPort: 5701
           startupProbe:
             httpGet:

@@ -9,6 +9,9 @@ imagePullSecrets: [ ]
 nameOverride: ""
 fullnameOverride: "blas-idp"
 
+aksNamespace: dev
+hazelcastService: hazelcast
+
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
@@ -99,7 +102,7 @@ service-config:
       org.hibernate: WARN
       com.azure: WARN
       io.micrometer: WARN
-      com.hazelcast: DEBUG
+      com.hazelcast: WARN
       org.mongodb: WARN
       com.zaxxer: WARN
       org.springframework: WARN
