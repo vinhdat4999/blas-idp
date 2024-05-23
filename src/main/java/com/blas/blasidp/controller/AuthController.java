@@ -87,8 +87,7 @@ public class AuthController {
   }
 
   @GetMapping(value = "/auth/token-via-oath2/{jwt}")
-  public ResponseEntity<JwtResponse> createAuthenticationToken(
-      @PathVariable("jwt") String jwt)
+  public ResponseEntity<JwtResponse> createAuthenticationToken(@PathVariable("jwt") String jwt)
       throws InvalidAlgorithmParameterException, IllegalBlockSizeException, NoSuchPaddingException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException {
     String decryptedToken = aesDecrypt(keyService.getBlasPrivateKey(),
         replace(jwt, SLASH_REPLACE, SLASH));
