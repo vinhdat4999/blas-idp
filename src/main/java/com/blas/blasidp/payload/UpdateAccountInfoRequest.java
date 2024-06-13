@@ -1,12 +1,11 @@
 package com.blas.blasidp.payload;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import java.time.LocalDate;
 import lombok.Data;
 
 @Data
-public class RegisterBody {
+public class UpdateAccountInfoRequest {
 
   @NotEmpty
   private String username;
@@ -21,17 +20,8 @@ public class RegisterBody {
   private String phoneNumber;
 
   @NotEmpty
-  @Email
-  private String email;
-
-  @NotEmpty
   private boolean gender;
 
   @NotEmpty
   private LocalDate birthday;
-
-  @NotEmpty
-  private String password;
-
-  private String avatarBase64;
 }
