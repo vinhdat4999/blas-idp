@@ -1,14 +1,10 @@
 package com.blas.blasidp.controller;
 
-import static com.blas.blascommon.constants.SecurityConstant.SLASH_REPLACE;
-import static com.blas.blascommon.security.SecurityUtils.aesDecrypt;
-import static com.blas.blascommon.utils.StringUtils.SLASH;
 import static com.blas.blasidp.constant.Authentication.ACCOUNT_BLOCKED;
 import static com.blas.blasidp.constant.Authentication.ACCOUNT_INACTIVE;
 import static com.blas.blasidp.constant.Authentication.THRESHOLD_BLOCK_ACCOUNT;
 import static com.blas.blasidp.constant.Authentication.WRONG_CREDENTIAL;
 import static com.blas.blasidp.utils.AuthUtils.generateToken;
-import static org.apache.commons.lang3.StringUtils.replace;
 
 import com.blas.blascommon.core.dao.jpa.AuthUserDao;
 import com.blas.blascommon.core.model.AuthUser;
@@ -17,7 +13,6 @@ import com.blas.blascommon.exceptions.types.UnauthorizedException;
 import com.blas.blascommon.jwt.JwtTokenUtil;
 import com.blas.blascommon.jwt.JwtUserDetailsService;
 import com.blas.blascommon.properties.JwtConfigurationProperties;
-import com.blas.blascommon.security.KeyService;
 import com.blas.blasidp.payload.JwtRequest;
 import com.blas.blasidp.payload.JwtResponse;
 import java.io.IOException;
@@ -42,9 +37,9 @@ import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -66,9 +61,6 @@ public class AuthController {
   @Lazy
   private final JwtConfigurationProperties jwtConfigurationProperties;
 
-  @Lazy
-  private final KeyService keyService;
-
   @PostMapping(value = "/auth/login")
   public ResponseEntity<JwtResponse> createAuthenticationToken(
       @RequestBody JwtRequest authenticationRequest)
@@ -86,14 +78,11 @@ public class AuthController {
             null, "Bearer"));
   }
 
-  @GetMapping(value = "/auth/token-via-oath2/{jwt}")
-  public ResponseEntity<JwtResponse> createAuthenticationToken(@PathVariable("jwt") String jwt)
-      throws InvalidAlgorithmParameterException, IllegalBlockSizeException, NoSuchPaddingException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException {
-    String decryptedToken = aesDecrypt(keyService.getBlasPrivateKey(),
-        replace(jwt, SLASH_REPLACE, SLASH));
+  @GetMapping(value = "/auth/token-via-oath2")
+  public ResponseEntity<JwtResponse> createAuthenticationToken(@RequestParam("token") String jwt) {
     long timeToExpired = jwtConfigurationProperties.getTimeToExpired();
     return ResponseEntity.ok(
-        new JwtResponse(decryptedToken, timeToExpired,
+        new JwtResponse(jwt, timeToExpired,
             LocalDateTime.now().minusSeconds(-timeToExpired), null, null, "Bearer"));
   }
 

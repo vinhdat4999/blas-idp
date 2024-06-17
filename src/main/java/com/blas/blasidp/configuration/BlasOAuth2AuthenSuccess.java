@@ -2,14 +2,10 @@ package com.blas.blasidp.configuration;
 
 import static com.blas.blascommon.constants.BlasConstant.FACEBOOK;
 import static com.blas.blascommon.constants.BlasConstant.GOOGLE;
-import static com.blas.blascommon.constants.SecurityConstant.SLASH_REPLACE;
-import static com.blas.blascommon.security.SecurityUtils.aesEncrypt;
 import static com.blas.blascommon.utils.IdUtils.genMixID;
-import static com.blas.blascommon.utils.StringUtils.SLASH;
 import static com.blas.blasidp.constant.Authentication.REGISTER_SUCCESSFULLY;
 import static com.blas.blasidp.utils.AuthUtils.generateToken;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.replace;
 import static org.apache.commons.lang3.StringUtils.upperCase;
 
 import com.blas.blascommon.core.model.AuthUser;
@@ -80,17 +76,17 @@ public class BlasOAuth2AuthenSuccess implements AuthenticationSuccessHandler {
         "Generated JWT - username: " + username + " - time to expired: "
             + jwtConfigurationProperties.getTimeToExpired());
     log.debug("Login via OAuth2 successfully");
-    String aedEncryptedToken = null;
+    String jwt;
     try {
-      aedEncryptedToken = aesEncrypt(keyService.getBlasPrivateKey(),
-          generateToken(jwtTokenUtil, username));
-    } catch (IllegalBlockSizeException | NoSuchPaddingException | BadPaddingException |
-             InvalidAlgorithmParameterException | InvalidKeyException | NoSuchAlgorithmException |
-             UnrecoverableKeyException | CertificateException | KeyStoreException exception) {
-      log.error(exception.toString());
+      jwt = generateToken(jwtTokenUtil, username);
+    } catch (InvalidAlgorithmParameterException | UnrecoverableKeyException |
+             IllegalBlockSizeException | NoSuchPaddingException | CertificateException |
+             KeyStoreException | NoSuchAlgorithmException | BadPaddingException |
+             InvalidKeyException e) {
+      throw new RuntimeException(e);
     }
     response.sendRedirect(
-        "/auth/token-via-oath2/" + replace(aedEncryptedToken, SLASH, SLASH_REPLACE));
+        "/auth/token-via-oath2?token=" + jwt);
   }
 
   private AuthUser signUpBlasAccountViaOAuth2(BlasOAuth2User oAuth2User,
