@@ -33,10 +33,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
-import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
 import java.util.List;
 import java.util.Map;
 import javax.crypto.BadPaddingException;
@@ -123,11 +120,10 @@ public class RegisterController {
 
     final String authenKey = authenKeyService.createAuthenKey(authUser);
     try {
-      telegramUtils.sendTelegramMessage(TELEGRAM_AUTHEN_KEY_MSG + authenKey,
+      telegramUtils.sendTelegramMessageBlasVietNamBot(TELEGRAM_AUTHEN_KEY_MSG + authenKey,
           authUser.getUserDetail().getTelegramChatId());
-    } catch (URISyntaxException | InvalidAlgorithmParameterException | UnrecoverableKeyException |
-             IllegalBlockSizeException | NoSuchPaddingException | CertificateException |
-             KeyStoreException | NoSuchAlgorithmException | BadPaddingException |
+    } catch (URISyntaxException | InvalidAlgorithmParameterException | IllegalBlockSizeException |
+             NoSuchPaddingException | NoSuchAlgorithmException | BadPaddingException |
              InvalidKeyException | IOException | InvocationTargetException | NoSuchMethodException |
              InstantiationException | IllegalAccessException exception) {
       log.error(exception.toString());
