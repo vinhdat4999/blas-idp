@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -29,6 +30,8 @@ public class WebSecurityConfig {
   private final BlasOAuth2AuthenSuccess blasOAuth2AuthenSuccess;
 
   private final Sha256Encoder sha256Encoder;
+
+  private final AccessDeniedHandler accessDeniedHandler;
 
   @Bean
   public AuthenticationManager authenticationManager(HttpSecurity http,
@@ -53,6 +56,8 @@ public class WebSecurityConfig {
         .oauth2Login(oauth2 -> oauth2.userInfoEndpoint(
                 userInfoEndpoint -> userInfoEndpoint.userService(blasOAuth2UserService))
             .successHandler(blasOAuth2AuthenSuccess))
+        .exceptionHandling(
+            authorize -> authorize.accessDeniedHandler(accessDeniedHandler))
         .headers(headers -> headers.frameOptions(FrameOptionsConfig::sameOrigin))
         .build();
   }
