@@ -9,6 +9,7 @@
 
 | Version | Date release | Tickets/Notes                                           |
 |---------|--------------|---------------------------------------------------------|
+| 2.16.0  | 29/08/2024   | Change to use Blas JDK base image                       |
 | 2.15.0  | 15/08/2024   | Uptake blas-bom 1.21.0 and blas-common 5.15.0           |
 | 2.14.0  | 02/08/2024   | Uptake blas-common v5.14.0                              |
 | 2.13.0  | 17/06/2024   | Show plain text jwt in URL                              |
