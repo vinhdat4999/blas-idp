@@ -2,6 +2,7 @@ package com.blas.blasidp.configuration;
 
 import static com.blas.blascommon.constants.BlasConstant.FACEBOOK;
 import static com.blas.blascommon.constants.BlasConstant.GOOGLE;
+import static com.blas.blascommon.exceptions.BlasErrorCodeEnum.MSG_BLAS_APP_FAILURE;
 import static com.blas.blascommon.utils.IdUtils.genMixID;
 import static com.blas.blasidp.constant.Authentication.REGISTER_SUCCESSFULLY;
 import static com.blas.blasidp.utils.AuthUtils.generateToken;
@@ -12,9 +13,9 @@ import com.blas.blascommon.core.model.AuthUser;
 import com.blas.blascommon.core.model.Role;
 import com.blas.blascommon.core.model.UserDetail;
 import com.blas.blascommon.core.service.AuthUserService;
+import com.blas.blascommon.exceptions.types.BlasException;
 import com.blas.blascommon.jwt.JwtTokenUtil;
 import com.blas.blascommon.properties.JwtConfigurationProperties;
-import com.blas.blascommon.security.KeyService;
 import com.blas.blascommon.security.hash.Sha256Encoder;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -57,9 +58,6 @@ public class BlasOAuth2AuthenSuccess implements AuthenticationSuccessHandler {
   @Lazy
   private final JwtConfigurationProperties jwtConfigurationProperties;
 
-  @Lazy
-  private final KeyService keyService;
-
   @Override
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
       Authentication authentication) throws IOException {
@@ -72,9 +70,8 @@ public class BlasOAuth2AuthenSuccess implements AuthenticationSuccessHandler {
       log.debug("Register new Blas account via OAuth2");
     }
     String username = authUser.getUsername();
-    log.info(
-        "Generated JWT - username: " + username + " - time to expired: "
-            + jwtConfigurationProperties.getTimeToExpired());
+    log.info("Generated JWT - username: {} - time to expired: {}", username,
+        jwtConfigurationProperties.getTimeToExpired());
     log.debug("Login via OAuth2 successfully");
     String jwt;
     try {
@@ -82,8 +79,8 @@ public class BlasOAuth2AuthenSuccess implements AuthenticationSuccessHandler {
     } catch (InvalidAlgorithmParameterException | UnrecoverableKeyException |
              IllegalBlockSizeException | NoSuchPaddingException | CertificateException |
              KeyStoreException | NoSuchAlgorithmException | BadPaddingException |
-             InvalidKeyException e) {
-      throw new RuntimeException(e);
+             InvalidKeyException exception) {
+      throw new BlasException(MSG_BLAS_APP_FAILURE, exception);
     }
     response.sendRedirect(
         "/auth/token-via-oath2?token=" + jwt);
