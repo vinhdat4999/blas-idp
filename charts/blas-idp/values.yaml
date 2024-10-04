@@ -10,7 +10,7 @@ imagePullSecrets: [ ]
 nameOverride: ""
 fullnameOverride: "blas-idp"
 
-aksNamespace: default
+aksNamespace: dev
 hazelcastService: hazelcast
 
 serviceAccount:
@@ -105,7 +105,7 @@ service-config:
   logging:
     level:
       root: INFO
-      com.blas: DEBUG
+      com.blas: INFO
       org.hibernate: WARN
       com.azure: WARN
       io.micrometer: WARN
@@ -115,10 +115,10 @@ service-config:
       org.springframework: WARN
       org.apache.http: WARN
   vault:
-    uri: http://vault.default.svc.cluster.local:8200
+    uri: http://vault.infra.svc.cluster.local:8200
     namespace:
     kubernetes:
-      role: secret_role
+      role: secret_role_dev
       service-account-token-file: /var/run/secrets/kubernetes.io/serviceaccount/token
     kv:
       backend: secrets
