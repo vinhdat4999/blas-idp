@@ -115,13 +115,13 @@ service-config:
       org.springframework: WARN
       org.apache.http: WARN
   vault:
-    uri: http://vault.infra.svc.cluster.local:8200
+    uri: http://vault.default.svc.cluster.local:8200
     namespace:
     kubernetes:
-      role: secret_role_dev
+      role: secret_dev_role
       service-account-token-file: /var/run/secrets/kubernetes.io/serviceaccount/token
     kv:
-      backend: secrets
+      backend: secrets-dev
       application-name: blas-idp
       default-context: common
     enabled: true
