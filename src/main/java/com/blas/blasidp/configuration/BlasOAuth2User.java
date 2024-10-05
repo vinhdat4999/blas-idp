@@ -27,6 +27,6 @@ public class BlasOAuth2User implements OAuth2User {
   }
 
   public String getEmail() {
-    return oauth2User.<String>getAttribute("email");
+    return oauth2User.getAttribute("email");
   }
 }
