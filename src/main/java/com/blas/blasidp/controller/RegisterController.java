@@ -21,11 +21,11 @@ import com.blas.blascommon.core.model.Role;
 import com.blas.blascommon.core.model.UserDetail;
 import com.blas.blascommon.core.service.AuthUserService;
 import com.blas.blascommon.core.service.AuthenKeyService;
+import com.blas.blascommon.core.service.TelegramService;
 import com.blas.blascommon.exceptions.types.BadRequestException;
 import com.blas.blascommon.exceptions.types.ForbiddenException;
 import com.blas.blascommon.payload.HtmlEmailRequest;
 import com.blas.blascommon.security.hash.Sha256Encoder;
-import com.blas.blascommon.utils.TelegramUtils;
 import com.blas.blasidp.payload.RegisterBody;
 import com.blas.blasidp.payload.VerifyAccountBody;
 import java.io.IOException;
@@ -65,7 +65,7 @@ public class RegisterController {
   private final Sha256Encoder passwordEncoder;
 
   @Lazy
-  private final TelegramUtils telegramUtils;
+  private final TelegramService telegramService;
 
   @Lazy
   private final EmailQueueService emailQueueService;
@@ -120,8 +120,8 @@ public class RegisterController {
 
     final String authenKey = authenKeyService.createAuthenKey(authUser);
     try {
-      telegramUtils.sendTelegramMessageBlasVietNamBot(TELEGRAM_AUTHEN_KEY_MSG + authenKey,
-          authUser.getUserDetail().getTelegramChatId());
+      telegramService.sendTelegramMessageBlasVietNamBot(TELEGRAM_AUTHEN_KEY_MSG + authenKey,
+          authUser.getUserDetail().getTelegramChatId(), null);
     } catch (URISyntaxException | InvalidAlgorithmParameterException | IllegalBlockSizeException |
              NoSuchPaddingException | NoSuchAlgorithmException | BadPaddingException |
              InvalidKeyException | IOException | InvocationTargetException | NoSuchMethodException |
