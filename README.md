@@ -9,6 +9,7 @@
 
 | Version | Date release | Tickets/Notes                                           |
 |---------|--------------|---------------------------------------------------------|
+| 3.2.0   | 31/10/2024   | Uptake blas-common 6.0.0                                |
 | 3.1.0   | 05/10/2024   | Add multiple namespace on Kubernetes                    |
 | 3.0.0   | 13/09/2024   | Integrate with Hashicorp Vault                          |
 | 2.17.0  | 03/09/2024   | Collect telemetry data using OpenTelemetry              |
