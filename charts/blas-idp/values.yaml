@@ -102,6 +102,10 @@ affinity: { }
 service-config:
   spring:
     profile: aks
+  blas:
+    image:
+      imgbb:
+        expirationTime: 3456000 # 40 days
   logging:
     level:
       root: INFO

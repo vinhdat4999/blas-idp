@@ -41,6 +41,10 @@ data:
                 scope:
                   - email
                   - public_profile
+      servlet:
+        multipart:
+          max-file-size: 20MB
+          max-request-size: 20MB
     management:
       endpoints:
         web:
@@ -53,6 +57,12 @@ data:
     blas:
       aliasBlasPrivateKey: blasSecretKey
       certificate: BlasSecretKey.p12
+      image:
+        imgbb:
+          enabled: true
+          url: https://api.imgbb.com/1/upload
+          privateKey: ${imgbb-private-key}
+          expirationTime: {{ index .Values "service-config" "blas" "image" "imgbb" "expirationTime" }}
       service:
         serviceName: {{ .Chart.Name }}
       gate-interceptor:

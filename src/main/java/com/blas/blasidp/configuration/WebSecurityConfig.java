@@ -1,5 +1,7 @@
 package com.blas.blasidp.configuration;
 
+import com.blas.blascommon.jwt.JwtAuthenticationEntryPoint;
+import com.blas.blascommon.jwt.JwtRequestFilter;
 import com.blas.blascommon.security.hash.Sha256Encoder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -11,10 +13,11 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -46,9 +49,9 @@ public class WebSecurityConfig {
   }
 
   @Bean
-  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    return http
-        .csrf(AbstractHttpConfigurer::disable)
+  public SecurityFilterChain filterChain(HttpSecurity http, JwtRequestFilter jwtRequestFilter,
+      JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) throws Exception {
+    http.csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(authorize -> authorize
             .requestMatchers("/auth/**", "/login/**", "/oauth2/**", "/actuator/**", "/hello")
             .permitAll()
@@ -57,8 +60,11 @@ public class WebSecurityConfig {
                 userInfoEndpoint -> userInfoEndpoint.userService(blasOAuth2UserService))
             .successHandler(blasOAuth2AuthenSuccess))
         .exceptionHandling(
-            authorize -> authorize.accessDeniedHandler(accessDeniedHandler))
-        .headers(headers -> headers.frameOptions(FrameOptionsConfig::sameOrigin))
+            authorize -> authorize.authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .accessDeniedHandler(accessDeniedHandler))
+        .sessionManagement(
+            authorize -> authorize.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+    return http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
         .build();
   }
 
@@ -67,7 +73,12 @@ public class WebSecurityConfig {
     return new WebMvcConfigurer() {
       @Override
       public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**").allowedMethods("*");
+        registry.addMapping("/**")
+            .allowedOrigins("http://localhost:3000")
+            .allowedMethods("*")
+            .allowedHeaders("*")
+            .allowCredentials(true)
+        ;
       }
     };
   }
