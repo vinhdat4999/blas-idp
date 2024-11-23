@@ -3,7 +3,7 @@ package com.blas.blasidp.configuration;
 import static com.blas.blascommon.constants.BlasConstant.FACEBOOK;
 import static com.blas.blascommon.constants.BlasConstant.GOOGLE;
 import static com.blas.blascommon.exceptions.BlasErrorCodeEnum.MSG_BLAS_APP_FAILURE;
-import static com.blas.blascommon.utils.IdUtils.genMixID;
+import static com.blas.blascommon.utils.idutils.IdUtils.genMixID;
 import static com.blas.blasidp.constant.Authentication.REGISTER_SUCCESSFULLY;
 import static com.blas.blasidp.utils.AuthUtils.generateToken;
 import static org.apache.commons.lang3.StringUtils.EMPTY;

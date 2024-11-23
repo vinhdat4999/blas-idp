@@ -9,6 +9,7 @@
 
 | Version | Date release | Tickets/Notes                                           |
 |---------|--------------|---------------------------------------------------------|
+| 3.4.0   | 14/11/2024   | Uptake blas-common 6.3.0                                |
 | 3.3.0   | 08/11/2024   | Uptake blas-bom 1.23.0 and blas-common 6.2.0            |
 | 3.2.0   | 31/10/2024   | Uptake blas-common 6.0.0                                |
 | 3.1.0   | 05/10/2024   | Add multiple namespace on Kubernetes                    |
