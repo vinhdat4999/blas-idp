@@ -43,8 +43,8 @@ data:
                   - public_profile
       servlet:
         multipart:
-          max-file-size: 20MB
-          max-request-size: 20MB
+          max-file-size: {{ index .Values "service-config" "spring" "servlet" "multipart" "max-file-size" }}
+          max-request-size: {{ index .Values "service-config" "spring" "servlet" "multipart" "max-request-size" }}
     management:
       endpoints:
         web:
@@ -55,26 +55,26 @@ data:
           probes:
             enabled: true
     blas:
-      aliasBlasPrivateKey: blasSecretKey
-      certificate: BlasSecretKey.p12
+      aliasBlasPrivateKey: {{ index .Values "service-config" "blas" "aliasBlasPrivateKey" }}
+      certificate: {{ index .Values "service-config" "blas" "certificate" }}
       image:
         imgbb:
-          enabled: true
-          url: https://api.imgbb.com/1/upload
+          enabled: {{ index .Values "service-config" "blas" "image" "imgbb" "enabled" }}
+          url: {{ index .Values "service-config" "blas" "image" "imgbb" "url" }}
           privateKey: ${imgbb-private-key}
           expirationTime: {{ index .Values "service-config" "blas" "image" "imgbb" "expirationTime" }}
       service:
         serviceName: {{ .Chart.Name }}
       gate-interceptor:
-        enableLogRequest: true
-        enableLogLocalRequest: false
+        enableLogRequest: {{ index .Values "service-config" "blas" "gate-interceptor" "enableLogRequest" }}
+        enableLogLocalRequest: {{ index .Values "service-config" "blas" "gate-interceptor" "enableLogLocalRequest" }}
       blas-service-support:
-        throughServiceSupport: true
-        endpointCheckMaintenance: http://blas-service-support.{{ .Values.aksNamespace }}.svc.cluster.local:8084/maintenance/check
+        throughServiceSupport: {{ index .Values "service-config" "blas" "blas-service-support" "throughServiceSupport" }}
+        endpointCheckMaintenance: {{ index .Values "service-config" "blas" "blas-service-support" "endpointCheckMaintenance" }}
       blas-idp:
-        isSendEmailAlert: true
+        isSendEmailAlert: {{ index .Values "service-config" "blas" "blas-idp" "isSendEmailAlert" }}
         jwt:
-          timeToExpired: 8640000 #100 days
+          timeToExpired: {{ index .Values "service-config" "blas" "blas-idp" "jwt" "timeToExpired" }}
       hazelcast:
         aksNamespace: {{ .Values.aksNamespace }}
         hazelcastService: {{ .Values.hazelcastService }}

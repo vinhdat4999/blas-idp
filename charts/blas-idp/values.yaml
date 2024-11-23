@@ -102,10 +102,28 @@ affinity: { }
 service-config:
   spring:
     profile: aks
+    servlet:
+      multipart:
+        max-file-size: 20MB
+        max-request-size: 20MB
   blas:
+    aliasBlasPrivateKey: blasSecretKey
+    certificate: BlasSecretKey.p12
     image:
       imgbb:
+        enabled: true
+        url: https://api.imgbb.com/1/upload
         expirationTime: 3456000 # 40 days
+    gate-interceptor:
+      enableLogRequest: true
+      enableLogLocalRequest: false
+    blas-service-support:
+      throughServiceSupport: true
+      endpointCheckMaintenance: http://blas-service-support.dev.svc.cluster.local:8084/maintenance/check
+    blas-idp:
+      isSendEmailAlert: true
+      jwt:
+        timeToExpired: 8640000 #100 days
   logging:
     level:
       root: INFO
