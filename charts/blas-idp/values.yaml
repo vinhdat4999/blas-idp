@@ -106,6 +106,7 @@ service-config:
       multipart:
         max-file-size: 20MB
         max-request-size: 20MB
+
   blas:
     aliasBlasPrivateKey: blasSecretKey
     certificate: BlasSecretKey.p12
@@ -124,6 +125,7 @@ service-config:
       isSendEmailAlert: true
       jwt:
         timeToExpired: 8640000 #100 days
+
   logging:
     level:
       root: INFO
@@ -136,6 +138,7 @@ service-config:
       com.zaxxer: WARN
       org.springframework: WARN
       org.apache.http: WARN
+
   vault:
     uri: http://vault.default.svc.cluster.local:8200
     namespace:
