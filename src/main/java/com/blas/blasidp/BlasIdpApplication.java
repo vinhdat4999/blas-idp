@@ -1,5 +1,6 @@
 package com.blas.blasidp;
 
+import com.blas.blasloggingaspect.listener.CustomApplicationListener;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -15,6 +16,8 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 public class BlasIdpApplication {
 
   public static void main(String[] args) {
-    SpringApplication.run(BlasIdpApplication.class, args);
+    SpringApplication app = new SpringApplication(BlasIdpApplication.class);
+    app.addListeners(new CustomApplicationListener());
+    app.run(args);
   }
 }
