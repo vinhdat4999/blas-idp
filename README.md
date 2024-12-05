@@ -9,6 +9,7 @@
 
 | Version | Date release | Tickets/Notes                                           |
 |---------|--------------|---------------------------------------------------------|
+| 3.6.0   | 05/12/2024   | Add OpenTelemetry agent extension                       |
 | 3.5.0   | 29/11/2024   | Support OpenTelemetry log data model and trace          |
 | 3.4.0   | 14/11/2024   | Uptake blas-common 6.3.0                                |
 | 3.3.0   | 08/11/2024   | Uptake blas-bom 1.23.0 and blas-common 6.2.0            |
