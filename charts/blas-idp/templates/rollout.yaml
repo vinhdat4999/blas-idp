@@ -46,6 +46,10 @@ spec:
           env:
             - name: OTEL_JAVAAGENT_EXTENSIONS
               value: "./blas-opentelemetry-agent-extension.jar"
+            - name: OTEL_INSTRUMENTATION_BLAS_MASKED_TAGS
+              value: "chat_id"
+            - name: OTEL_INSTRUMENTATION_BLAS_MASKED_PATTERNS
+              value: "Do%20not%20disclose%20the%20verification%20code%20to%20anyone%5C.%20Your%20authentication%20code%20will%20expire%20in%20\\d+%20\\S+%5C.%20Your%20verification%5C:%20([a-zA-Z0-9]+)&chat_id=,https://api.telegram.org/bot([a-zA-Z0-9_-]+):([a-zA-Z0-9_-]+)"
           ports:
             - name: http
               containerPort: {{ .Values.service.targetPort }}

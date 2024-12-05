@@ -9,7 +9,7 @@ RUN mkdir temp
 
 ARG PACKAGE
 ARG OTEL_AGENT_VERSION=1.28.0
-ARG BLAS_OTEL_EXTENSION_VERSION=1.0.0
+ARG BLAS_OTEL_EXTENSION_VERSION=1.1.0
 
 COPY download-script.sh ./download-script.sh
 RUN chmod u+x ./download-script.sh && ./download-script.sh
