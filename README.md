@@ -9,6 +9,7 @@
 
 | Version | Date release | Tickets/Notes                                           |
 |---------|--------------|---------------------------------------------------------|
+| 3.7.0   | 06/12/2024   | Mask sensitive http.url span attribute                  |
 | 3.6.0   | 05/12/2024   | Add OpenTelemetry agent extension                       |
 | 3.5.0   | 29/11/2024   | Support OpenTelemetry log data model and trace          |
 | 3.4.0   | 14/11/2024   | Uptake blas-common 6.3.0                                |
